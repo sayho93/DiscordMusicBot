@@ -1,9 +1,13 @@
 {
   "compilerOptions": {
     "strict": true,
-    "module": "commonjs",
-    "target": "es6",
-    "sourceMap": true
+    "module": "commonJS",
+    "target": "es2020",
+    "sourceMap": true,
+    "esModuleInterop": true,        // import * as ~~~ 을 함수로 사용할 수 있게 해준다
+    "skipLibCheck": true,           // *.d.ts파일의 타의 검사를 건너뛴
+    "experimentalDecorators": true, // 타입스크립트 데코레이터를 사용하기 위해 필요한 옵션
+    "emitDecoratorMetadata": true   // 위와 같음
   },
   "include": [
     "src/**/*.ts"
