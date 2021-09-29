@@ -35,8 +35,6 @@ export class DiscordBotClient extends Client{
     public connection: VoiceConnection | null
     public async playSong(message: any){
         const queue: any[] = this.musicData.queue
-        Log.debug(queue.length)
-        Log.debug(JSON.stringify(queue[0]))
         this.connection = await joinVoiceChannel({
             channelId: queue[0].voiceChannel.id,
             guildId: message.guild.id,
@@ -45,6 +43,8 @@ export class DiscordBotClient extends Client{
 
         const video = await queue[0].video.fetch()
         queue[0] = Utils.formatVideo(video, queue[0].voiceChannel)
+        Log.debug(queue.length)
+        Log.debug(JSON.stringify(queue[0]))
 
         //TODO ytdl suffers from socket connection end in long videos
         // const stream = ytdl(queue[0].url, {
@@ -81,7 +81,6 @@ export class DiscordBotClient extends Client{
             })
             .on(AudioPlayerStatus.Idle, () => {
                 if(queue.length >= 1){
-                    Log.debug(JSON.stringify(queue))
                     Log.debug('queue length is not zero')
                     Log.info(queue.length)
                     Log.info(JSON.stringify(queue[queue.length - 1]))
