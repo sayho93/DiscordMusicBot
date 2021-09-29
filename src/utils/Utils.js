@@ -36,15 +36,16 @@ class Utils{
     formatVideo = (video, voiceChannel) => {
         const url = `https://www.youtube.com/watch?v=${video.raw.id}`
         const title = video.raw.snippet.title
-        let duration = this.formatDuration(video.duration)
+        let duration = video.duration !== undefined ? this.formatDuration(video.duration) : null
         const thumbnail = video.thumbnails.high.url
         if(duration === '00:00') duration = 'Live Stream'
         return {
-            url,
-            title,
-            duration,
-            thumbnail,
-            voiceChannel
+            url: url,
+            title: title,
+            duration: duration,
+            thumbnail: thumbnail,
+            voiceChannel: voiceChannel,
+            video: video
         }
     }
 }

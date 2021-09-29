@@ -8,7 +8,7 @@ module.exports = {
     async execute(message){
         Log.verbose('Skipping song...')
         if(message.client.musicData.queue.length === 0) return message.reply('queue is empty')
-        message.client.musicData.queue.shift()
-        message.client.playSong(message)
+        // message.client.musicData.queue.shift()
+        await message.client.playSong(message)
     }
 }

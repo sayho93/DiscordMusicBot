@@ -24,25 +24,25 @@ module.exports = {
 
         try{
             const query = args[1]
-            if(query.match(/^(?!.*\?.*\bv=)https:\/\/www\.youtube\.com\/.*\?.*\blist=.*$/)){
+            if(query.match(/^(?!.*\?.*\bv=)https:\/\/(www\.)?youtube\.com\/.*\?.*\blist=.*$/)){
                 try{
                     const playlist = await youtube.getPlaylist(query)
                     const videosObj = await playlist.getVideos()
                     let thumb
-                    for(let i = 0; i < videosObj.length; i++){
-                        const video = await videosObj[i].fetch()
-                        if(i === 0) thumb = video.thumbnails.high.url
-                        message.client.musicData.queue.push(Utils.formatVideo(video, voiceChannel))
+                    for(const [idx, item] of videosObj.entries()){
+                        if(item.raw.status.privacyStatus !== 'private'){
+                            if(idx === 0) thumb = item.thumbnails.high.url
+                            message.client.musicData.queue.push(Utils.formatVideo(item, voiceChannel))
+                        }
                     }
 
                     const queue = message.client.musicData.queue
-                    Log.info(queue.length)
-                    Log.info(JSON.stringify(queue[queue.length - 1]))
+                    Log.info(`queue length: ${queue.length}`)
+                    Log.info(`next: ${JSON.stringify(queue[0])}`)
 
                     const embed = new MessageEmbed()
                         .setColor('#ffffff')
                         .setTitle('Queued')
-                        // .setURL(query)
                         .setDescription(`Queued ${videosObj.length} tracks`)
                         .addField(`Total Queue` ,`${queue.length} tracks`)
                         .addField(`Playlist` ,`:musical_note:  ${playlist.title} :musical_note: has been added to queue`)
@@ -64,8 +64,8 @@ module.exports = {
                     message.client.musicData.queue.push(song)
 
                     const queue = message.client.musicData.queue
-                    Log.info(queue.length)
-                    Log.info(JSON.stringify(queue[queue.length - 1]))
+                    Log.info(`Queue length: ${queue.length}`)
+                    Log.info(`Current: ${JSON.stringify(queue[0])}`)
 
                     const embed = new MessageEmbed()
                         .setColor('#ffffff')

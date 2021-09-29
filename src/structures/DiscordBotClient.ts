@@ -10,6 +10,7 @@ import {
 import {raw}  from "youtube-dl-exec"
 // import ytdl from 'ytdl-core'
 import {Log} from '../utils/Logger.js'
+import Utils from "../utils/Utils";
 
 export class MusicType{
     constructor(){
@@ -41,6 +42,9 @@ export class DiscordBotClient extends Client{
             guildId: message.guild.id,
             adapterCreator: message.guild.voiceAdapterCreator
         })
+
+        const video = await queue[0].video.fetch()
+        queue[0] = Utils.formatVideo(video, queue[0].voiceChannel)
 
         //TODO ytdl suffers from socket connection end in long videos
         // const stream = ytdl(queue[0].url, {
