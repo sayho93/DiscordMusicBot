@@ -4,8 +4,12 @@ import {token} from '../config.json'
 import {DiscordBotClient} from "./structures/DiscordBotClient"
 import {Log} from './utils/Logger'
 
-const client: DiscordBotClient = new DiscordBotClient({intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES, discord.Intents.FLAGS.GUILD_VOICE_STATES]})
 
+Log.info(JSON.stringify(process.env))
+Log.info(process.version)
+Log.info(JSON.stringify(process.versions))
+
+const client: DiscordBotClient = new DiscordBotClient({intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES, discord.Intents.FLAGS.GUILD_VOICE_STATES]})
 
 fs.readdirSync('src/commands').forEach(dirs => {
     const commands = fs.readdirSync(`src/commands/${dirs}`).filter(files => files.endsWith('.js'))

@@ -24,6 +24,9 @@ const discord = __importStar(require("discord.js"));
 const config_json_1 = require("../config.json");
 const DiscordBotClient_1 = require("./structures/DiscordBotClient");
 const Logger_1 = require("./utils/Logger");
+Logger_1.Log.info(JSON.stringify(process.env));
+Logger_1.Log.info(process.version);
+Logger_1.Log.info(JSON.stringify(process.versions));
 const client = new DiscordBotClient_1.DiscordBotClient({ intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES, discord.Intents.FLAGS.GUILD_VOICE_STATES] });
 fs.readdirSync('src/commands').forEach(dirs => {
     const commands = fs.readdirSync(`src/commands/${dirs}`).filter(files => files.endsWith('.js'));

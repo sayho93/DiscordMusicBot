@@ -5,7 +5,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start:dev": "ts-node-dev --respawn --transfile-only src/App.ts",
+    "start:dev": "ts-node-dev --respawn --transpile-only --debug src/App.ts",
     "start:build": "NDOE_ENV=production node build/index.js",
     "start": "NODE_ENV=production ts-node src/App.ts",
     "build": "tsc",

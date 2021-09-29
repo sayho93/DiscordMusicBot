@@ -1,4 +1,4 @@
-import {Client, ClientEvents, ClientOptions, Collection, MessageEmbed} from "discord.js"
+import {Client, ClientOptions, Collection, MessageEmbed} from "discord.js"
 import {
     AudioPlayerStatus,
     createAudioPlayer,
@@ -7,10 +7,9 @@ import {
     StreamType,
     VoiceConnection
 } from "@discordjs/voice";
-import ytdl from "youtube-dl-exec";
+import {raw}  from "youtube-dl-exec"
+// import ytdl from 'ytdl-core'
 import {Log} from '../utils/Logger.js'
-import {ChildProcess} from "child_process";
-import {ExecaChildProcess} from "execa";
 
 export class MusicType{
     constructor(){
@@ -48,8 +47,8 @@ export class DiscordBotClient extends Client{
         //     quality: 'highestaudio',
         //     highWaterMark: 1024 * 1024 * 10
         // })
-        // @ts-ignore
-        const stream: any = ytdl(queue[0].url, {
+
+        const stream: any = raw(queue[0].url, {
             o: '-',
             q: '',
             f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
@@ -66,7 +65,7 @@ export class DiscordBotClient extends Client{
         player
             .on(AudioPlayerStatus.Playing, () => {
                 const currentItem = queue[0]
-                const embed = new MessageEmbed()
+                const embed: MessageEmbed = new MessageEmbed()
                     .setColor('#0099ff')
                     .setTitle(`:: Currently playing :arrow_forward: ::`)
                     .setDescription(`${currentItem.title} (${currentItem.duration})`)
@@ -77,14 +76,14 @@ export class DiscordBotClient extends Client{
                 queue.shift()
             })
             .on(AudioPlayerStatus.Idle, () => {
-                if (queue.length >= 1) {
+                if(queue.length >= 1){
                     Log.debug(JSON.stringify(queue))
                     Log.debug('queue length is not zero')
                     Log.info(queue.length)
                     Log.info(JSON.stringify(queue[queue.length - 1]))
-                    if (this.musicData.queue.length === 0) return
+                    if(this.musicData.queue.length === 0) return
                     return this.playSong(message)
-                } else {
+                } else{
                     Log.debug('queue empty')
                     this.musicData.isPlaying = false
 

@@ -6,7 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DiscordBotClient = exports.MusicType = void 0;
 const discord_js_1 = require("discord.js");
 const voice_1 = require("@discordjs/voice");
-const youtube_dl_exec_1 = __importDefault(require("youtube-dl-exec"));
+// import {raw}  from "youtube-dl-exec"
+const ytdl_core_1 = __importDefault(require("ytdl-core"));
 const Logger_js_1 = require("../utils/Logger.js");
 class MusicType {
     constructor() {
@@ -33,19 +34,19 @@ class DiscordBotClient extends discord_js_1.Client {
             adapterCreator: message.guild.voiceAdapterCreator
         });
         //TODO ytdl suffers from socket connection end in long videos
-        // const stream = ytdl(queue[0].url, {
-        //     quality: 'highestaudio',
-        //     highWaterMark: 1024 * 1024 * 10
-        // })
-        // @ts-ignore
-        const stream = (0, youtube_dl_exec_1.default)(queue[0].url, {
-            o: '-',
-            q: '',
-            f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
-            r: '100K',
-        }, { stdio: ['ignore', 'pipe', 'ignore'] });
-        // const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
-        const resource = (0, voice_1.createAudioResource)(stream.stdout, { inputType: voice_1.StreamType.Arbitrary });
+        const stream = (0, ytdl_core_1.default)(queue[0].url, {
+            quality: 'highestaudio',
+            highWaterMark: 1024 * 1024 * 10
+        });
+        // Log.error(queue[0].url)
+        // const stream: any = raw(queue[0].url, {
+        //     o: '-',
+        //     q: '',
+        //     f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
+        //     r: '100K',
+        // }, {stdio: ['ignore', 'pipe', 'ignore']})
+        const resource = (0, voice_1.createAudioResource)(stream, { inputType: voice_1.StreamType.Arbitrary });
+        // const resource = createAudioResource(stream.stdout, {inputType: StreamType.Arbitrary})
         const player = (0, voice_1.createAudioPlayer)();
         player.play(resource);
         this.connection.subscribe(player);
