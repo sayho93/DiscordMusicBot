@@ -11,10 +11,11 @@
     "emitDecoratorMetadata": true,   // 위와 같음
     "allowJs": true,
     "resolveJsonModule": true,
-    "outDir": "generated",
+    "outDir": "dist",
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*",
+//    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules"
