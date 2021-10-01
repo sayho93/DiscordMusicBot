@@ -7,7 +7,7 @@ module.exports = {
     async execute(message){
         if(!message.member.voice.channel) return message.reply('You have to be in a voice channel to clear queue music')
         if(message.client.musicData.queue.length === 0) return message.reply('Queue is empty')
-        message.client.musicData.queue = []
+        message.client.musicData.queue = [message.client.musicData.queue[0]]
         message.client.musicData.isPlaying = false
         message.reply('queue cleared')
     }

@@ -1,6 +1,7 @@
 import {Client, ClientOptions, Collection, MessageEmbed} from "discord.js"
 import {
-    AudioPlayerStatus,
+    AudioPlayer,
+    AudioPlayerStatus, AudioResource,
     createAudioPlayer,
     createAudioResource,
     joinVoiceChannel,
@@ -61,8 +62,8 @@ export class DiscordBotClient extends Client{
 
 
         // const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
-        const resource = createAudioResource(stream.stdout, {inputType: StreamType.Arbitrary})
-        const player = createAudioPlayer()
+        const resource:AudioResource = createAudioResource(stream.stdout, {inputType: StreamType.Arbitrary})
+        const player: AudioPlayer = createAudioPlayer()
 
         player.play(resource)
         this.connection.subscribe(player)
@@ -77,21 +78,22 @@ export class DiscordBotClient extends Client{
                     .setThumbnail(currentItem.thumbnail)
                 message.channel.send({embeds: [embed]})
                 Log.info(`Currently playing ${currentItem.title}`)
-                queue.shift()
+                // queue.shift()
             })
             .on(AudioPlayerStatus.Idle, () => {
-                if(queue.length >= 1){
+                if(queue.length > 1){
                     Log.debug('queue length is not zero')
                     Log.info(queue.length)
                     Log.info(JSON.stringify(queue[queue.length - 1]))
-                    if(this.musicData.queue.length === 0) return
+                    if(this.musicData.queue.length === 1) return
+                    message.client.musicData.queue.shift()
                     return this.playSong(message)
                 } else{
                     Log.debug('queue empty')
                     this.musicData.isPlaying = false
 
                     setTimeout(() => {
-                        if (this.musicData.queue.length < 1) {
+                        if(this.musicData.queue.length < 1){
                             message.channel.send(`Disconnected from channel due to inactivity`)
                             if(this.connection !== null) this.connection.destroy()
                         }
@@ -103,5 +105,10 @@ export class DiscordBotClient extends Client{
                 message.channel.send('error occurred')
                 if(this.connection !== null) return this.connection.destroy()
             })
+    }
+
+    public stopSong(){
+        const player = createAudioPlayer()
+        player.stop()
     }
 }
