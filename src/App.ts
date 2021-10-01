@@ -12,7 +12,7 @@ Log.info(JSON.stringify(process.versions))
 const client: DiscordBotClient = new DiscordBotClient({intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES, discord.Intents.FLAGS.GUILD_VOICE_STATES]})
 
 fs.readdirSync('src/commands').forEach(dirs => {
-    const commands = fs.readdirSync(`src/commands/${dirs}`).filter(files => files.endsWith('.js'))
+    const commands: string[] = fs.readdirSync(`src/commands/${dirs}`).filter(files => files.endsWith('.js'))
     commands.forEach(item => {
         const command = require(`./commands/${dirs}/${item}`)
         Log.debug(`[commands] Loading ${item}`)
