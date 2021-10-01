@@ -33,7 +33,7 @@ module.exports = {
                     return interaction.client.playSong(interaction)
                 }
             } catch(err){
-                console.error(err)
+                Log.error(err.stack)
             }
         }
 
@@ -43,8 +43,8 @@ module.exports = {
             try{
                 Log.info(`request:: command: ${interaction.commandName}, user: ${interaction.user.tag}`)
                 await command.execute(interaction)
-            }catch(error){
-                Log.error(error)
+            }catch(err){
+                Log.error(err.stack)
                 await interaction.reply({content: 'There was an error while executing this command!', ephemeral: true})
             }
         }

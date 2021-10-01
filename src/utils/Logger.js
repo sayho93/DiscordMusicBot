@@ -26,6 +26,7 @@ const options = {
             }),
             label({label: 'SayhoBot'}),
             logFormat,
+            winston.format.errors({stack: true}),
             winston.format.colorize(),
         ),
         transports: [
@@ -46,6 +47,7 @@ const options = {
             }),
             label({label: 'SayhoBot'}),
             logFormat,
+            winston.format.errors(),
             winston.format.colorize(),
         ),
         transports: [

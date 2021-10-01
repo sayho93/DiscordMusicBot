@@ -54,7 +54,7 @@ module.exports = {
                         return message.client.playSong(message)
                     }
                 }catch(err){
-                    console.error(err)
+                    Log.error(err.stack)
                     return message.reply('Playlist is either private or it does not exist')
                 }
             }else if(query.match(/https:\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?/)){
@@ -82,25 +82,26 @@ module.exports = {
                         return message.client.playSong(message)
                     }
                 } catch(err){
-                    console.error(err)
+                    Log.error(err.stack)
                 }
             }
             else{
                 try{
                     let searchTxt = ''
                     args.forEach((item, idx) => {
-                        if(idx !== 0) searchTxt += `${item} `
+                        if(idx !== 0) searchTxt += `${item}`
                     })
 
+                    searchTxt = searchTxt.trim()
                     Log.debug(searchTxt)
                     const results = await youtube.searchVideos(searchTxt, 10)
                     // console.log(JSON.stringify(results))
 
                     const list = []
-                    results.forEach((item, idx) => {
-                        if(idx > 6) return
+                    results.forEach(item => {
                         const url = `https://www.youtube.com/watch?v=${item.id}`
                         const title = item.raw.snippet.title
+                        if(title.length >= 100) return
                         const selectItem = {
                             label: title,
                             description: title,
@@ -109,7 +110,7 @@ module.exports = {
                         list.push(selectItem)
                     })
 
-                    console.log(JSON.stringify(list))
+                    Log.info(JSON.stringify(list))
 
                     const component = new MessageSelectMenu()
                         .setCustomId('select')
@@ -119,14 +120,14 @@ module.exports = {
                         .addComponents(
                             component
                         )
-                    await message.reply({content: searchTxt, components: [row]})
+                    await message.reply({content: `'${searchTxt}' 검색 결과`, components: [row]})
                 } catch(err){
-                    console.error(err)
+                    Log.error(err.stack)
                 }
             }
         } catch(err){
             message.client.musicData.isPlaying = false
-            console.error(err)
+            Log.error(err.stack)
         }
     }
 }

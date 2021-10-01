@@ -6,7 +6,7 @@ module.exports = {
         Log.info(`message received ${message.content}`)
         if(message.author.bot) return
         if(!message.content.startsWith(prefix)) {
-            Log.error(`doesn't match prefix '${prefix}' skipping...`)
+            Log.verbose(`doesn't match prefix '${prefix}' skipping...`)
             return
         }
 
@@ -22,8 +22,8 @@ module.exports = {
 
         try{
             await command.execute(message)
-        } catch(error){
-            console.error(error)
+        } catch(err){
+            Log.error(err.stack)
             await message.reply({content: 'There was an error while executing this command'})
         }
     }
