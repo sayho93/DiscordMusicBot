@@ -7,11 +7,11 @@ import {
     joinVoiceChannel,
     StreamType,
     VoiceConnection
-} from "@discordjs/voice";
+} from "@discordjs/voice"
 import {raw}  from "youtube-dl-exec"
 // import ytdl from 'ytdl-core'
 import {Log} from '../utils/Logger.js'
-import Utils from "../utils/Utils";
+import Utils from "../utils/Utils"
 
 export class MusicType{
     constructor(){

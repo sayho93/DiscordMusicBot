@@ -9,7 +9,7 @@ Log.info(JSON.stringify(process.env))
 Log.info(process.version)
 Log.info(JSON.stringify(process.versions))
 
-const client: DiscordBotClient = new DiscordBotClient({intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MESSAGES, discord.Intents.FLAGS.GUILD_VOICE_STATES]})
+const client: DiscordBotClient = new DiscordBotClient({intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MEMBERS, discord.Intents.FLAGS.GUILD_MESSAGES, discord.Intents.FLAGS.GUILD_VOICE_STATES]})
 
 fs.readdirSync('src/commands').forEach(dirs => {
     const commands: string[] = fs.readdirSync(`src/commands/${dirs}`).filter(files => files.endsWith('.js'))
@@ -20,11 +20,13 @@ fs.readdirSync('src/commands').forEach(dirs => {
     })
 })
 
-fs.readdirSync('src/events').filter(file => file.endsWith('.js')).forEach(item => {
-    const event = require(`./events/${item}`)
+fs.readdirSync('src/events').filter(file => file.endsWith('.ts')).forEach(item => {
+    const event = require(`./events/${item}`).default
+    console.log(event)
+    console.log(event.name)
     Log.debug(`[events] Loading ${event.name}`)
-    if(event.once) client.once(event.name, (...args) => event.execute(...args))
-    else client.on(event.name, (...args) => event.execute(...args))
+    if(event.once) client.once(event.name, (...args) => event.execute(...args, client))
+    else client.on(event.name, (...args) => event.execute(...args, client))
 })
 
 client.login(token).then()
