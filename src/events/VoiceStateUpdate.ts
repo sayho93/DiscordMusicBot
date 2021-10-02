@@ -2,7 +2,7 @@ import {VoiceState} from "discord.js"
 import {DiscordBotClient} from "../structures/DiscordBotClient"
 import {Log} from '../utils/Logger'
 
-const VoiceStateUpdate = {
+export default {
     name: 'voiceStateUpdate',
     execute: async  (oldState: VoiceState, newState: VoiceState, client: DiscordBotClient) => {
         if (oldState.channelId !== (oldState.guild.me?.voice.channelId || newState.channel)) return
@@ -20,5 +20,3 @@ const VoiceStateUpdate = {
         }
     }
 }
-
-export default VoiceStateUpdate

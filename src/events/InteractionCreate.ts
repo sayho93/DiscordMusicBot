@@ -2,8 +2,6 @@ import {Log} from '../utils/Logger'
 import {
     Guild,
     GuildMember,
-    GuildMemberManager,
-    Interaction,
     MessageEmbed,
     SelectMenuInteraction,
     Snowflake
@@ -14,7 +12,7 @@ import Utils from '../utils/Utils'
 import {DiscordBotClient} from "../structures/DiscordBotClient";
 const youtube = new Youtube(youtubeAPI)
 
-const InteractionCreate = {
+export default {
     name: 'interactionCreate',
     async execute(interaction: SelectMenuInteraction, client: DiscordBotClient){
         if(interaction.isSelectMenu()){
@@ -67,5 +65,3 @@ const InteractionCreate = {
         }
     },
 }
-
-export default InteractionCreate

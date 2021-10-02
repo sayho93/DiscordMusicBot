@@ -1,14 +1,14 @@
-const {SlashCommandBuilder} = require('@discordjs/builders')
-const {MessageEmbed} = require('discord.js')
-const {prefix} = require('../../../config.json')
+import {SlashCommandBuilder} from "@discordjs/builders"
+import {Message, MessageEmbed} from "discord.js"
+import {prefix} from '../../../config.json'
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('h')
         .setDescription('show commands'),
-    async execute(message){
-        if(!message.member.voice.channel) return message.reply('You have to be in a voice channel to make bot leave')
-        const embed = new MessageEmbed()
+    async execute(message: Message){
+        if(!message.member?.voice.channel) return message.reply('You have to be in a voice channel to make bot leave')
+        const embed: MessageEmbed = new MessageEmbed()
             .setColor('#ffffff')
             .setTitle('Commands')
             .addField('prefix', prefix)
@@ -18,6 +18,6 @@ module.exports = {
             .addField(`eq`, `음악 큐 제거 => ${prefix}eq`)
             .addField(`l`, `내보내기 => ${prefix}l`)
             .addField('재생을 하지 않을 시 매뉴얼', '$l을 사용해 봇 내보내기 이후 다시 플레이\n만일 내보내기가 되지 않는다면 채널 인원 목록에서 봇 우클릭 후 연결 끊기 이후 $p로 재사용')
-        message.reply({embeds: [embed]})
+        await message.reply({embeds: [embed]})
     }
 }
