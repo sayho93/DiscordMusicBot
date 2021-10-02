@@ -22,13 +22,12 @@ const InteractionCreate = {
                 const video = await youtube.getVideo(interaction.values[0])
                 const guild: Guild | undefined = client.guilds.cache.get(interaction.guildId ?? '')
                 const member: GuildMember | undefined = guild?.members.cache.get(<Snowflake>interaction.member?.user.id)
-                // @ts-ignore
-                Log.verbose(JSON.stringify(interaction.member.voice.channel))
-                Log.error(JSON.stringify(interaction.member))
 
                 Log.debug(JSON.stringify(member?.voice))
-                const song = Utils.formatVideo(video, member?.voice.channelId)
-                //TODO FIND VOICE CHANNEL ID
+                // const song = Utils.formatVideo(video, member?.voice.channelId)
+                // @ts-ignore
+                const song = Utils.formatVideo(video, interaction.member?.voice.channel)
+                //TODO FIND VOICE CHANNEL ID ?????
                 Log.info(JSON.stringify(song))
                 client.musicData.queue.push(song)
                 // "888461845457928237"
@@ -44,7 +43,7 @@ const InteractionCreate = {
                     .addField(`Total Queue` ,`${queue.length} tracks`)
                     .addField(`Track` ,`:musical_note:  ${song.title} :musical_note: has been added to queue`)
                     .setThumbnail(song.thumbnail)
-                interaction.reply({embeds: [embed]})
+                await interaction.reply({embeds: [embed]})
 
                 if(!client.musicData.isPlaying){
                     client.musicData.isPlaying = true
