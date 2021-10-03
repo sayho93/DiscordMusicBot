@@ -11,7 +11,9 @@ export default {
         Log.verbose('Skipping song...')
         if(client.musicData.queue.length <= 1){
             await message.reply('Nothing to play')
-            await client.stopSong()
+            client.musicData.queue = []
+            client.musicData.player?.stop()
+            // await client.stopSong()
             return
         }
         client.musicData.queue.shift()

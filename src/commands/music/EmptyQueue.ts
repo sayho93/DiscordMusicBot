@@ -11,6 +11,7 @@ export default {
         if(client.musicData.queue.length === 0) return message.reply('Queue is empty')
         client.musicData.queue = [client.musicData.queue[0]]
         client.musicData.isPlaying = false
+        console.log(client.musicData)
         await message.reply('queue cleared')
     }
 }

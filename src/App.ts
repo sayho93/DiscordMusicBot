@@ -22,8 +22,6 @@ fs.readdirSync('src/commands').forEach(dirs => {
 
 fs.readdirSync('src/events').filter(file => file.endsWith('.ts')).forEach(item => {
     const event = require(`./events/${item}`).default
-    console.log(event)
-    console.log(event.name)
     Log.debug(`[events] Loading ${event.name}`)
     if(event.once) client.once(event.name, (...args) => event.execute(...args, client))
     else client.on(event.name, (...args) => event.execute(...args, client))

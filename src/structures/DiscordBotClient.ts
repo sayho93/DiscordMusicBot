@@ -18,10 +18,12 @@ export class MusicType{
         this.queue = []
         this.isPlaying = false
         this.volume = 1
+        this.player = null
     }
     public queue: any[]
     public isPlaying: Boolean
     public volume: number
+    public player: AudioPlayer | null
 }
 
 export class DiscordBotClient extends Client{
@@ -34,6 +36,7 @@ export class DiscordBotClient extends Client{
     public commands: Collection<any, any>
     public musicData: MusicType
     public connection: VoiceConnection | null
+
     public async playSong(message: any){
         const queue: any[] = this.musicData.queue
         this.connection = await joinVoiceChannel({
@@ -64,12 +67,13 @@ export class DiscordBotClient extends Client{
         // const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
         const resource:AudioResource = createAudioResource(stream.stdout, {inputType: StreamType.Arbitrary})
         const player: AudioPlayer = createAudioPlayer()
+        this.musicData.player = player
 
         player.play(resource)
         this.connection.subscribe(player)
         player
             .on(AudioPlayerStatus.Playing, () => {
-                const currentItem = queue[0]
+                const currentItem = this.musicData.queue[0]
                 const embed: MessageEmbed = new MessageEmbed()
                     .setColor('#0099ff')
                     .setTitle(`:: Currently playing :arrow_forward: ::`)
@@ -81,19 +85,21 @@ export class DiscordBotClient extends Client{
                 // queue.shift()
             })
             .on(AudioPlayerStatus.Idle, () => {
-                if(queue.length > 1){
+                const currentQueueLength = this.musicData.queue.length
+
+                if(this.musicData.queue.length > 1){
                     Log.debug('queue length is not zero')
-                    Log.info(queue.length)
-                    Log.info(JSON.stringify(queue[queue.length - 1]))
-                    if(this.musicData.queue.length === 1) return
-                    message.client.musicData.queue.shift()
+                    Log.info(currentQueueLength)
+                    Log.info(JSON.stringify(this.musicData.queue[currentQueueLength - 1]))
+                    if(currentQueueLength === 1) return
+                    this.musicData.queue.shift()
                     return this.playSong(message)
                 } else{
                     Log.debug('queue empty')
                     this.musicData.isPlaying = false
 
                     setTimeout(() => {
-                        if(this.musicData.queue.length <= 1){
+                        if(currentQueueLength <= 1){
                             message.channel.send(`Disconnected from channel due to inactivity`)
                             if(this.connection !== null) this.connection.destroy()
                         }
@@ -105,10 +111,5 @@ export class DiscordBotClient extends Client{
                 message.channel.send('error occurred')
                 if(this.connection !== null) return this.connection.destroy()
             })
-    }
-
-    public stopSong(){
-        const player = createAudioPlayer()
-        player.stop()
     }
 }
