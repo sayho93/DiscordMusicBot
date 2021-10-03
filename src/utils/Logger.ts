@@ -1,11 +1,12 @@
-const winston = require('winston')
-const winstonDaily = require('winston-daily-rotate-file')
-const fs = require('fs')
+import winston from "winston"
+import winstonDaily from 'winston-daily-rotate-file'
+import * as fs from "fs"
+
 const logDir = 'logs'  // logs 디렉토리 하위에 로그 파일 저장
 const {combine, timestamp, printf, label} = winston.format
 
 // Define log format
-const logFormat = printf(info => {
+const logFormat = printf((info: any) => {
     return `${info.timestamp} [${info.label}] ${info.level}: ${info.message}`
 })
 
@@ -55,10 +56,10 @@ const options = {
     }
 }
 
-const Log = winston.createLogger(options.file).add(new winston.transports.Console(options.console))
+export const Log = winston.createLogger(options.file).add(new winston.transports.Console(options.console))
 const stream = {
-    write: message => {
+    write: (message: string) => {
         Log.http(message.substring(0,message.lastIndexOf('\n')))
     }
 }
-module.exports = {Log, stream}
+export default {Log, stream}

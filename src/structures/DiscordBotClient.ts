@@ -10,7 +10,7 @@ import {
 } from "@discordjs/voice"
 import {raw}  from "youtube-dl-exec"
 // import ytdl from 'ytdl-core'
-import {Log} from '../utils/Logger.js'
+import {Log} from '../utils/Logger'
 import Utils from "../utils/Utils"
 
 export class MusicType{
@@ -93,7 +93,7 @@ export class DiscordBotClient extends Client{
                     this.musicData.isPlaying = false
 
                     setTimeout(() => {
-                        if(this.musicData.queue.length < 1){
+                        if(this.musicData.queue.length <= 1){
                             message.channel.send(`Disconnected from channel due to inactivity`)
                             if(this.connection !== null) this.connection.destroy()
                         }

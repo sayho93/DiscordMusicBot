@@ -1,7 +1,7 @@
-const axios = require('axios')
+import axios from "axios"
 
 class Utils{
-    getData = (url, params) => {
+    getData = (url: string, params: any) => {
         return new Promise(async (resolve, reject) => {
             await axios.get(url, {params: params})
                 .then((response) => {
@@ -11,7 +11,7 @@ class Utils{
         })
     }
 
-    postData = (url, data) => {
+    postData = (url: string, data: any) => {
         return new Promise(async (resolve, reject) => {
             await axios.post(url, data)
                 .then((response) => {
@@ -21,7 +21,7 @@ class Utils{
         })
     }
 
-    formatDuration = (durationObj) => {
+    formatDuration = (durationObj: any) => {
         return `${durationObj.hours ? durationObj.hours + ':' : ''}${
             durationObj.minutes ? durationObj.minutes : '00'
         }:${
@@ -33,7 +33,7 @@ class Utils{
         }`
     }
 
-    formatVideo = (video, voiceChannel) => {
+    formatVideo = (video: any, voiceChannel: any) => {
         const url = `https://www.youtube.com/watch?v=${video.raw.id}`
         const title = video.raw.snippet.title
         let duration = video.duration !== undefined ? this.formatDuration(video.duration) : null
@@ -50,4 +50,4 @@ class Utils{
     }
 }
 
-module.exports = new Utils()
+export default new Utils()
