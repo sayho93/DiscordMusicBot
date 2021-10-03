@@ -1,7 +1,7 @@
-import {Message} from "discord.js";
+import {Message} from "discord.js"
 import {Log} from '../utils/Logger'
 import {prefix} from '../../config.json'
-import {DiscordBotClient} from "../structures/DiscordBotClient";
+import {DiscordBotClient} from "../structures/DiscordBotClient"
 
 export default {
     name: 'messageCreate',

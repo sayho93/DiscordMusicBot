@@ -2,7 +2,7 @@ import {SlashCommandBuilder} from "@discordjs/builders"
 import {Message} from "discord.js"
 import {DiscordBotClient} from "../../structures/DiscordBotClient";
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder()
         .setName('l')
         .setDescription('Make Bot leave voice channel'),

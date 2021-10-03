@@ -2,7 +2,7 @@ import {SlashCommandBuilder} from "@discordjs/builders"
 import {Message, MessageEmbed} from "discord.js"
 import {prefix} from '../../../config.json'
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder()
         .setName('h')
         .setDescription('show commands'),

@@ -9,7 +9,7 @@ import {
 const Youtube = require('simple-youtube-api')
 import {youtubeAPI} from '../../config.json'
 import Utils from '../utils/Utils'
-import {DiscordBotClient} from "../structures/DiscordBotClient";
+import {DiscordBotClient} from "../structures/DiscordBotClient"
 const youtube = new Youtube(youtubeAPI)
 
 export default {

@@ -1,7 +1,7 @@
 import {Log} from '../utils/Logger'
-import {DiscordBotClient} from "../structures/DiscordBotClient";
+import {DiscordBotClient} from "../structures/DiscordBotClient"
 
-const Ready = {
+export default {
     name: 'ready',
     once: true,
     execute(client: DiscordBotClient) {
@@ -9,5 +9,3 @@ const Ready = {
         Log.verbose(`Logged in as ${client.user?.tag}`)
     },
 }
-
-export default Ready
