@@ -47,8 +47,8 @@ export class DiscordBotClient extends Client{
 
         const video = await queue[0].video.fetch()
         queue[0] = Utils.formatVideo(video, queue[0].voiceChannel)
-        Log.debug(queue.length)
-        Log.debug(JSON.stringify(queue[0]))
+        // Log.debug(queue.length)
+        // Log.debug(JSON.stringify(queue[0]))
 
         //TODO ytdl suffers from socket connection end in long videos
         // const stream = ytdl(queue[0].url, {
@@ -97,6 +97,7 @@ export class DiscordBotClient extends Client{
 
                     setTimeout(() => {
                         if(this.musicData.queue.length <= 1){
+                            this.musicData = new MusicType()
                             message.channel.send(`Disconnected from channel due to inactivity`)
                             if(this.connection !== null) this.connection.destroy()
                         }

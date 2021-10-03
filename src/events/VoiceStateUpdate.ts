@@ -1,5 +1,5 @@
 import {VoiceState} from "discord.js"
-import {DiscordBotClient} from "../structures/DiscordBotClient"
+import {DiscordBotClient, MusicType} from "../structures/DiscordBotClient"
 import {Log} from '../utils/Logger'
 
 export default {
@@ -11,7 +11,7 @@ export default {
             setTimeout(() => {
                 if (!((oldState.channel?.members.size ?? 1) - 1)) {
                     const channel: any = oldState.client.channels.cache.filter((channel: any) => channel.name === '일반').first()
-                    // channel.send('Disconnected from channel due to inactivity')
+                    client.musicData = new MusicType()
                     channel.send('바윙~')
                     client.connection?.destroy()
                 }

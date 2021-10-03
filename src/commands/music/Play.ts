@@ -42,7 +42,7 @@ export default {
 
                     const queue = client.musicData.queue
                     Log.info(`queue length: ${queue.length}`)
-                    Log.info(`next: ${JSON.stringify(queue[0])}`)
+                    Log.info(`next: ${JSON.stringify(queue[0].title)}`)
 
                     const embed = new MessageEmbed()
                         .setColor('#ffffff')
@@ -69,7 +69,7 @@ export default {
 
                     const queue = client.musicData.queue
                     Log.info(`Queue length: ${queue.length}`)
-                    Log.info(`Current: ${JSON.stringify(queue[0])}`)
+                    Log.info(`Current: ${JSON.stringify(queue[0].title)}`)
 
                     const embed = new MessageEmbed()
                         .setColor('#ffffff')
@@ -114,7 +114,7 @@ export default {
                         list.push(selectItem)
                     })
 
-                    Log.info(JSON.stringify(list))
+                    // Log.info(JSON.stringify(list))
 
                     const component = new MessageSelectMenu()
                         .setCustomId('select')

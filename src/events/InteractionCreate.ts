@@ -17,12 +17,10 @@ export default {
 
                 const song = Utils.formatVideo(video, member?.voice.channel)
                 //TODO FIND VOICE CHANNEL ID ?????
-                Log.info(JSON.stringify(song))
                 client.musicData.queue.push(song)
-                // "888461845457928237"
                 const queue: any[] = client.musicData.queue
-                Log.info(queue.length)
-                // Log.info(JSON.stringify(queue[queue.length - 1]))
+                Log.info(`${song.title} added to queue`)
+                Log.info(`queue length: ${queue.length}`)
 
                 const embed: MessageEmbed = new MessageEmbed()
                     .setColor('#ffffff')
