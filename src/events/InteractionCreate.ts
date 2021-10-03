@@ -1,11 +1,5 @@
 import {Log} from '../utils/Logger'
-import {
-    Guild,
-    GuildMember,
-    MessageEmbed,
-    SelectMenuInteraction,
-    Snowflake
-} from "discord.js"
+import {Guild, GuildMember, Interaction, MessageEmbed, Snowflake} from "discord.js"
 const Youtube = require('simple-youtube-api')
 import {youtubeAPI} from '../../config.json'
 import Utils from '../utils/Utils'
@@ -14,17 +8,14 @@ const youtube = new Youtube(youtubeAPI)
 
 export default {
     name: 'interactionCreate',
-    async execute(interaction: SelectMenuInteraction, client: DiscordBotClient){
+    async execute(interaction: Interaction, client: DiscordBotClient){
         if(interaction.isSelectMenu()){
             try{
                 const video = await youtube.getVideo(interaction.values[0])
                 const guild: Guild | undefined = client.guilds.cache.get(interaction.guildId ?? '')
                 const member: GuildMember | undefined = guild?.members.cache.get(<Snowflake>interaction.member?.user.id)
 
-                Log.debug(JSON.stringify(member?.voice))
-                // const song = Utils.formatVideo(video, member?.voice.channelId)
-                // @ts-ignore
-                const song = Utils.formatVideo(video, interaction.member?.voice.channel)
+                const song = Utils.formatVideo(video, member?.voice.channel)
                 //TODO FIND VOICE CHANNEL ID ?????
                 Log.info(JSON.stringify(song))
                 client.musicData.queue.push(song)

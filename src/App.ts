@@ -5,8 +5,7 @@ import {DiscordBotClient} from "./structures/DiscordBotClient"
 import {Log} from './utils/Logger'
 
 
-Log.info(JSON.stringify(process.env))
-Log.info(process.version)
+// Log.info(JSON.stringify(process.env))
 Log.info(JSON.stringify(process.versions))
 
 const client: DiscordBotClient = new DiscordBotClient({intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MEMBERS, discord.Intents.FLAGS.GUILD_MESSAGES, discord.Intents.FLAGS.GUILD_VOICE_STATES]})

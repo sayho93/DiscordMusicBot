@@ -1,6 +1,6 @@
 import {SlashCommandBuilder} from "@discordjs/builders"
 import {Message} from "discord.js"
-import {DiscordBotClient} from "../../structures/DiscordBotClient";
+import {DiscordBotClient} from "../../structures/DiscordBotClient"
 
 export default {
     data: new SlashCommandBuilder()

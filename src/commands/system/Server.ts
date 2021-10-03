@@ -1,6 +1,6 @@
 import {SlashCommandBuilder} from "@discordjs/builders"
 import {Log} from '../../utils/Logger'
-import {Message} from "discord.js";
+import {Message} from "discord.js"
 
 export default {
     data: new SlashCommandBuilder()

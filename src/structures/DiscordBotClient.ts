@@ -74,24 +74,21 @@ export class DiscordBotClient extends Client{
         player
             .on(AudioPlayerStatus.Playing, () => {
                 const currentItem = this.musicData.queue[0]
-                const embed: MessageEmbed = new MessageEmbed()
-                    .setColor('#0099ff')
-                    .setTitle(`:: Currently playing :arrow_forward: ::`)
-                    .setDescription(`${currentItem.title} (${currentItem.duration})`)
-                    .setURL(currentItem.url)
-                    .setThumbnail(currentItem.thumbnail)
-                message.channel.send({embeds: [embed]})
-                Log.info(`Currently playing ${currentItem.title}`)
-                // queue.shift()
+                if(currentItem !== undefined){
+                    const embed: MessageEmbed = new MessageEmbed()
+                        .setColor('#0099ff')
+                        .setTitle(`:: Currently playing :arrow_forward: ::`)
+                        .setDescription(`${currentItem.title} (${currentItem.duration})`)
+                        .setURL(currentItem.url)
+                        .setThumbnail(currentItem.thumbnail)
+                    message.channel.send({embeds: [embed]})
+                    Log.info(`Currently playing ${currentItem.title}`)
+                }
             })
             .on(AudioPlayerStatus.Idle, () => {
-                const currentQueueLength = this.musicData.queue.length
-
                 if(this.musicData.queue.length > 1){
                     Log.debug('queue length is not zero')
-                    Log.info(currentQueueLength)
-                    Log.info(JSON.stringify(this.musicData.queue[currentQueueLength - 1]))
-                    if(currentQueueLength === 1) return
+                    if(this.musicData.queue.length === 1) return
                     this.musicData.queue.shift()
                     return this.playSong(message)
                 } else{
@@ -99,7 +96,7 @@ export class DiscordBotClient extends Client{
                     this.musicData.isPlaying = false
 
                     setTimeout(() => {
-                        if(currentQueueLength <= 1){
+                        if(this.musicData.queue.length <= 1){
                             message.channel.send(`Disconnected from channel due to inactivity`)
                             if(this.connection !== null) this.connection.destroy()
                         }
