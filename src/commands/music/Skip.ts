@@ -8,12 +8,12 @@ export default {
         .setName('s')
         .setDescription('Skip current playing music'),
     async execute(message: Message, client: DiscordBotClient){
+        if(!message.member?.voice.channel) return message.reply('You have to be in a voice channel to see queue')
         Log.verbose('Skipping song...')
         if(client.musicData.queue.length <= 1){
             await message.reply('Nothing to play')
             client.musicData.queue = []
             client.musicData.player?.stop()
-            // await client.stopSong()
             return
         }
         client.musicData.queue.shift()

@@ -8,11 +8,16 @@ start)
     echo "Starting $SERVICE_NAME ..."
     "${COMMAND[@]}"
     echo "$SERVICE_NAME started..."
+    forever list
     ;;
 stop)
     forever stop "$(cat "$PID_PATH_NAME")"
+    echo "$SERVICE_NAME stopped..."
+    forever list
     ;;
 restart)
+    echo "restarting $SERVICE_NAME..."
     forever restart $SOURCE_DIR
+    forever list
     ;;
 esac

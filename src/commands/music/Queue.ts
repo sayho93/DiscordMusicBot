@@ -17,7 +17,7 @@ export default {
             .setThumbnail(queue[1].thumbnail)
 
         queue.forEach((item, idx) => {
-            if(idx !== 0) embed.addField(`${idx}`, `${item.title} (${item.duration})`)
+            if(idx !== 0) embed.addField(`${idx}`, `${item.title}`)
         })
         await message.reply({embeds: [embed]})
     }

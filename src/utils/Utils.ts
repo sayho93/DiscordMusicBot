@@ -1,6 +1,5 @@
 import axios from "axios"
-import {Log} from "./Logger";
-import {Message} from "discord.js";
+import {Message, MessageEmbed} from "discord.js";
 
 class Utils{
     getData = (url: string, params: any) => {
@@ -52,9 +51,12 @@ class Utils{
     }
 
     onError = (err: unknown, message: Message) => {
-        if (err instanceof Error) {
-            Log.error(err.stack)
-            message.reply({content: err.stack}).then()
+        if(err instanceof Error){
+            const embed = new MessageEmbed()
+                .setColor('RED')
+                .setTitle('An error has occurred')
+                .setDescription(<string>err.stack)
+            message.reply({embeds: [embed]}).then()
         }
     }
 }
