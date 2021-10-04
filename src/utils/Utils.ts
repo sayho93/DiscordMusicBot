@@ -1,4 +1,6 @@
 import axios from "axios"
+import {Log} from "./Logger";
+import {Message} from "discord.js";
 
 class Utils{
     getData = (url: string, params: any) => {
@@ -46,6 +48,13 @@ class Utils{
             thumbnail: thumbnail,
             voiceChannel: voiceChannel,
             video: video
+        }
+    }
+
+    onError = (err: unknown, message: Message) => {
+        if (err instanceof Error) {
+            Log.error(err.stack)
+            message.reply({content: err.stack}).then()
         }
     }
 }

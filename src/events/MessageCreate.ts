@@ -2,6 +2,7 @@ import {Message} from "discord.js"
 import {Log} from '../utils/Logger'
 import {prefix} from '../../config.json'
 import {DiscordBotClient} from "../structures/DiscordBotClient"
+import Utils from "../utils/Utils";
 
 export default {
     name: 'messageCreate',
@@ -26,7 +27,7 @@ export default {
         try{
             await command.execute(message, client)
         } catch(err){
-            if(err instanceof Error) Log.error(err.stack)
+            Utils.onError(err, message)
             await message.reply({content: 'There was an error while executing this command'})
         }
     }

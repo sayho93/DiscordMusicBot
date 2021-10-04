@@ -9,9 +9,9 @@ import {
     VoiceConnection
 } from "@discordjs/voice"
 import {raw}  from "youtube-dl-exec"
-// import ytdl from 'ytdl-core'
 import {Log} from '../utils/Logger'
 import Utils from "../utils/Utils"
+// import ytdl from 'ytdl-core'
 
 export class MusicType{
     constructor(){

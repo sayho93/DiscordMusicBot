@@ -1,6 +1,7 @@
 import {SlashCommandBuilder} from "@discordjs/builders"
 import {Message} from "discord.js"
 import {DiscordBotClient} from "../../structures/DiscordBotClient"
+import Utils from "../../utils/Utils";
 
 export default {
     data: new SlashCommandBuilder()
@@ -10,6 +11,10 @@ export default {
         if(!message.member?.voice.channel) return message.reply('You have to be in a voice channel to make bot leave')
         client.musicData.queue = []
         client.musicData.isPlaying = false
-        return client.connection?.destroy()
+        try{
+            client.connection?.destroy()
+        } catch(err){
+            Utils.onError(err, message)
+        }
     }
 }

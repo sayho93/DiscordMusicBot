@@ -4,7 +4,6 @@ import {token} from '../config.json'
 import {DiscordBotClient} from "./structures/DiscordBotClient"
 import {Log} from './utils/Logger'
 
-
 // Log.info(JSON.stringify(process.env))
 Log.info(JSON.stringify(process.versions))
 

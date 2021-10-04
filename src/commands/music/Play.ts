@@ -58,7 +58,7 @@ export default {
                         return client.playSong(message)
                     }
                 }catch(err){
-                    if(err instanceof Error) Log.error(err.stack)
+                    Utils.onError(err, message)
                     return message.reply('Playlist is either private or it does not exist')
                 }
             }else if(query.match(/https:\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?/)){
@@ -86,7 +86,7 @@ export default {
                         return client.playSong(message)
                     }
                 } catch(err){
-                    if(err instanceof Error) Log.error(err.stack)
+                    Utils.onError(err, message)
                 }
             }
             else{
@@ -126,12 +126,12 @@ export default {
                         )
                     await message.reply({content: `'${searchTxt}' 검색 결과`, components: [row]})
                 } catch(err){
-                    if(err instanceof Error) Log.error(err.stack)
+                    Utils.onError(err, message)
                 }
             }
         } catch(err){
             client.musicData.isPlaying = false
-            if(err instanceof Error) Log.error(err.stack)
+            Utils.onError(err, message)
         }
     }
 }
