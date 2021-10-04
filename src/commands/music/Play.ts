@@ -61,7 +61,7 @@ export default {
                     Utils.onError(err, message)
                     return message.reply('Playlist is either private or it does not exist')
                 }
-            }else if(query.match(/https:\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?/)){
+            } else if(query.match(/https:\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?/)){
                 try{
                     const video = await youtube.getVideo(query)
                     const song = Utils.formatVideo(video, voiceChannel)
@@ -88,8 +88,7 @@ export default {
                 } catch(err){
                     Utils.onError(err, message)
                 }
-            }
-            else{
+            } else{
                 try{
                     let searchTxt = ''
                     args.forEach((item, idx) => {
