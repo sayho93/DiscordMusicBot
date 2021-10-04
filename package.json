@@ -7,7 +7,7 @@
   "scripts": {
     "start:dev:nonRespawn": "ts-node-dev --transpile-only src/App.ts",
     "start:dev": "ts-node-dev --respawn --transpile-only --debug src/App.ts",
-    "start:build": "NDOE_ENV=production node dist/src/App.js",
+    "start:build": "node dist/src/App.js",
     "start": "NODE_ENV=production ts-node src/App.ts",
     "build": "tsc",
     "deploy": "node src/deploy.js"

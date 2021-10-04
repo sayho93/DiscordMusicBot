@@ -9,8 +9,13 @@ Log.info(JSON.stringify(process.versions))
 
 const client: DiscordBotClient = new DiscordBotClient({intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MEMBERS, discord.Intents.FLAGS.GUILD_MESSAGES, discord.Intents.FLAGS.GUILD_VOICE_STATES]})
 
-fs.readdirSync('src/commands').forEach(dirs => {
-    const commands: string[] = fs.readdirSync(`src/commands/${dirs}`).filter(files => files.endsWith('.ts'))
+const path: string = process.env.NODE_ENV === 'production' ? 'dist/src' : 'src'
+// const path: string = 'dist/src'
+const extension: string = process.env.NODE_ENV === 'production' ? '.js' : '.ts'
+// const extension: string = '.js'
+
+fs.readdirSync(`${path}/commands`).forEach(dirs => {
+    const commands: string[] = fs.readdirSync(`${path}/commands/${dirs}`).filter(files => files.endsWith(extension))
     commands.forEach(item => {
         const command = require(`./commands/${dirs}/${item}`).default
         Log.debug(`[commands] Loading ${item}`)
@@ -18,7 +23,7 @@ fs.readdirSync('src/commands').forEach(dirs => {
     })
 })
 
-fs.readdirSync('src/events').filter(file => file.endsWith('.ts')).forEach(item => {
+fs.readdirSync(`${path}/events`).filter(file => file.endsWith(extension)).forEach(item => {
     const event = require(`./events/${item}`).default
     Log.debug(`[events] Loading ${event.name}`)
     if(event.once) client.once(event.name, (...args) => event.execute(...args, client))
