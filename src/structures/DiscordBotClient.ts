@@ -11,7 +11,7 @@ import {
 import {raw}  from "youtube-dl-exec"
 import {Log} from '../utils/Logger'
 import Utils from "../utils/Utils"
-// import ytdl from 'ytdl-core'
+import ytdl from 'ytdl-core'
 
 export class MusicType{
     constructor(){
@@ -38,34 +38,33 @@ export class DiscordBotClient extends Client{
     public connection: VoiceConnection | null
 
     public async playSong(message: any){
-        const queue: any[] = this.musicData.queue
         this.connection = await joinVoiceChannel({
-            channelId: queue[0].voiceChannel.id,
+            channelId: this.musicData.queue[0].voiceChannel.id,
             guildId: message.guild.id,
             adapterCreator: message.guild.voiceAdapterCreator
         })
 
-        const video = await queue[0].video.fetch()
-        queue[0] = Utils.formatVideo(video, queue[0].voiceChannel)
+        const video = await this.musicData.queue[0].video.fetch()
+        this.musicData.queue[0] = Utils.formatVideo(video, this.musicData.queue[0].voiceChannel)
         // Log.debug(queue.length)
         // Log.debug(JSON.stringify(queue[0]))
 
         //TODO ytdl suffers from socket connection end in long videos
-        // const stream = ytdl(queue[0].url, {
-        //     quality: 'highestaudio',
-        //     highWaterMark: 1024 * 1024 * 10
-        // })
+        const stream = ytdl(this.musicData.queue[0].url, {
+            quality: 'highestaudio',
+            highWaterMark: 1024 * 1024 * 10
+        })
 
-        const stream: any = raw(queue[0].url, {
-            o: '-',
-            q: '',
-            f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
-            r: '100K',
-        }, {stdio: ['ignore', 'pipe', 'ignore']})
+        // const stream: any = raw(queue[0].url, {
+        //     o: '-',
+        //     q: '',
+        //     f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
+        //     r: '100K',
+        // }, {stdio: ['ignore', 'pipe', 'ignore']})
 
 
-        // const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
-        const resource:AudioResource = createAudioResource(stream.stdout, {inputType: StreamType.Arbitrary})
+        const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
+        // const resource:AudioResource = createAudioResource(stream.stdout, {inputType: StreamType.Arbitrary})
         const player: AudioPlayer = createAudioPlayer()
         this.musicData.player = player
 
@@ -104,8 +103,9 @@ export class DiscordBotClient extends Client{
                     }, 180000)
                 }
             })
-            .on('error', () => {
-                message.guild.musicData.isPlaying = false
+            .on('error', (error) => {
+                console.log(error)
+                this.musicData.isPlaying = false
                 message.channel.send('error occurred')
                 if(this.connection !== null) return this.connection.destroy()
             })
