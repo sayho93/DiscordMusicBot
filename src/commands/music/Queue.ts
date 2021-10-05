@@ -6,7 +6,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('q')
         .setDescription('Stop current playing music'),
-    async execute(message: Message, client: DiscordBotClient){
+    execute: async (message: Message, client: DiscordBotClient) => {
         if(!message.member?.voice.channel) return message.reply('You have to be in a voice channel to see queue')
         if(client.musicData.queue.length === 1) return message.reply('Queue is empty')
 

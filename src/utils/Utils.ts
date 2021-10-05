@@ -1,5 +1,5 @@
 import axios from "axios"
-import {Message, MessageEmbed} from "discord.js";
+import {Message, MessageEmbed} from "discord.js"
 
 class Utils{
     getData = (url: string, params: any) => {

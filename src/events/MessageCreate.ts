@@ -6,10 +6,10 @@ import Utils from "../utils/Utils";
 
 export default {
     name: 'messageCreate',
-    async execute(message: Message, client: DiscordBotClient){
+    execute: async (message: Message, client: DiscordBotClient) => {
         Log.info(`message received ${message.content}`)
         if(message.author.bot) return
-        if(!message.content.startsWith(prefix)) {
+        if(!message.content.startsWith(prefix)){
             Log.verbose(`doesn't match prefix '${prefix}' skipping...`)
             return
         }

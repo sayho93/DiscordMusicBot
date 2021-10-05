@@ -13,7 +13,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('p')
         .setDescription('Plays music with uri'),
-    async execute(message: Message, client: DiscordBotClient){
+    execute: async (message: Message, client: DiscordBotClient) => {
         const args: string[] = message.content.slice(prefix.length).trim().split(/ +/g)
         if(args.length < 2){
             await message.reply(`parameter count doesn't match`)
@@ -59,7 +59,7 @@ export default {
                         client.musicData.isPlaying = true
                         return client.playSong(message)
                     }
-                }catch(err){
+                } catch(err){
                     Utils.onError(err, message)
                     return message.reply('Playlist is either private or it does not exist')
                 }
@@ -94,7 +94,7 @@ export default {
                 try{
                     let searchTxt = ''
                     args.forEach((item, idx) => {
-                        if(idx !== 0) searchTxt += `${item}`
+                        if(idx !== 0) searchTxt += `${item} `
                     })
 
                     searchTxt = searchTxt.trim()

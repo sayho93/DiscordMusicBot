@@ -7,7 +7,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('l')
         .setDescription('Make Bot leave voice channel'),
-    async execute(message: Message, client: DiscordBotClient){
+    execute: async (message: Message, client: DiscordBotClient) => {
         if(!message.member?.voice.channel) return message.reply('You have to be in a voice channel to make bot leave')
         client.musicData.queue = []
         client.musicData.isPlaying = false

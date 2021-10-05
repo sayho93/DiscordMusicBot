@@ -8,7 +8,7 @@ const youtube = new Youtube(youtubeAPI)
 
 export default {
     name: 'interactionCreate',
-    async execute(interaction: Interaction, client: DiscordBotClient){
+    execute: async (interaction: Interaction, client: DiscordBotClient) => {
         if(interaction.isSelectMenu()){
             try{
                 const video = await youtube.getVideo(interaction.values[0])

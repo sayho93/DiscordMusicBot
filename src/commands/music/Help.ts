@@ -6,7 +6,7 @@ export default {
     data: new SlashCommandBuilder()
         .setName('h')
         .setDescription('show commands'),
-    async execute(message: Message){
+    execute: async (message: Message) => {
         if(!message.member?.voice.channel) return message.reply('You have to be in a voice channel to make bot leave')
         const embed: MessageEmbed = new MessageEmbed()
             .setColor('#ffffff')
