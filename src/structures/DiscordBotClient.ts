@@ -11,7 +11,7 @@ import {
 import {raw}  from "youtube-dl-exec"
 import {Log} from '../utils/Logger'
 import Utils from "../utils/Utils"
-import ytdl from 'ytdl-core'
+// import ytdl from 'ytdl-core'
 
 export class MusicType{
     constructor(){
@@ -49,22 +49,22 @@ export class DiscordBotClient extends Client{
         // Log.debug(queue.length)
         // Log.debug(JSON.stringify(queue[0]))
 
-        //TODO ytdl suffers from socket connection end in long videos
-        const stream = ytdl(this.musicData.queue[0].url, {
-            quality: 'highestaudio',
-            highWaterMark: 1024 * 1024 * 10
-        })
+        // //TODO ytdl suffers from socket connection end in long videos
+        // const stream = ytdl(this.musicData.queue[0].url, {
+        //     quality: 'highestaudio',
+        //     highWaterMark: 1024 * 1024 * 10
+        // })
 
-        // const stream: any = raw(queue[0].url, {
-        //     o: '-',
-        //     q: '',
-        //     f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
-        //     r: '100K',
-        // }, {stdio: ['ignore', 'pipe', 'ignore']})
+        const stream: any = raw(this.musicData.queue[0].url, {
+            o: '-',
+            q: '',
+            f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
+            r: '100K',
+        }, {stdio: ['ignore', 'pipe', 'ignore']})
 
 
-        const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
-        // const resource:AudioResource = createAudioResource(stream.stdout, {inputType: StreamType.Arbitrary})
+        // const resource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
+        const resource:AudioResource = createAudioResource(stream.stdout, {inputType: StreamType.Arbitrary})
         const player: AudioPlayer = createAudioPlayer()
         this.musicData.player = player
 
@@ -92,11 +92,9 @@ export class DiscordBotClient extends Client{
                     return this.playSong(message)
                 } else{
                     Log.debug('queue empty')
-                    this.musicData.isPlaying = false
-
+                    this.musicData = new MusicType()
                     setTimeout(() => {
                         if(this.musicData.queue.length <= 1){
-                            this.musicData = new MusicType()
                             message.channel.send(`Disconnected from channel due to inactivity`)
                             if(this.connection !== null) this.connection.destroy()
                         }
