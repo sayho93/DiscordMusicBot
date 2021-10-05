@@ -38,6 +38,8 @@ export class DiscordBotClient extends Client{
     public connection: VoiceConnection | null
 
     public async playSong(message: any){
+        Log.debug(`isPlaying::::: ${this.musicData.isPlaying}`)
+
         this.connection = await joinVoiceChannel({
             channelId: this.musicData.queue[0].voiceChannel.id,
             guildId: message.guild.id,
@@ -87,14 +89,13 @@ export class DiscordBotClient extends Client{
             .on(AudioPlayerStatus.Idle, () => {
                 if(this.musicData.queue.length > 1){
                     Log.debug('queue length is not zero')
-                    if(this.musicData.queue.length === 1) return
                     this.musicData.queue.shift()
                     return this.playSong(message)
                 } else{
                     Log.debug('queue empty')
                     this.musicData.isPlaying = false
                     setTimeout(() => {
-                        if(this.musicData.queue.length <= 1){
+                        if(this.musicData.queue.length <= 1 && !this.musicData.isPlaying){
                             this.musicData = new MusicType()
                             message.channel.send(`Disconnected from channel due to inactivity`)
                             if(this.connection !== null) this.connection.destroy()
