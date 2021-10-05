@@ -92,9 +92,10 @@ export class DiscordBotClient extends Client{
                     return this.playSong(message)
                 } else{
                     Log.debug('queue empty')
-                    this.musicData = new MusicType()
+                    this.musicData.isPlaying = false
                     setTimeout(() => {
                         if(this.musicData.queue.length <= 1){
+                            this.musicData = new MusicType()
                             message.channel.send(`Disconnected from channel due to inactivity`)
                             if(this.connection !== null) this.connection.destroy()
                         }

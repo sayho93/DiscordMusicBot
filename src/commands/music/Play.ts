@@ -26,6 +26,8 @@ export default {
         const permissions = voiceChannel.permissionsFor(message.client.user)
         if(!permissions.has("CONNECT") || !permissions.has("SPEAK")) return message.channel.send("I need the permissions to join and speak in your voice channel")
 
+        if(!client.musicData.isPlaying && client.musicData.queue.length === 1) client.musicData.queue.shift()
+
         try{
             const query = args[1]
             if(query.match(/^(?!.*\?.*\bv=)https:\/\/(www\.)?youtube\.com\/.*\?.*\blist=.*$/)){
