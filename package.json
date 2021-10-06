@@ -8,7 +8,7 @@
     "start:dev:nonRespawn": "ts-node-dev --transpile-only src/App.ts",
     "start:dev": "ts-node-dev --respawn --transpile-only --debug src/App.ts",
     "start:build": "node dist/src/App.js",
-    "start": "NODE_ENV=production ts-node src/App.ts",
+    "start": "ts-node src/App.ts",
     "build": "tsc",
     "deploy": "node src/deploy.js"
   },
@@ -18,14 +18,14 @@
     "@discordjs/voice": "^0.6.0",
     "axios": "^0.21.4",
     "discord-api-types": "^0.23.1",
-    "discord.js": "^13.1.0",
+    "discord.js": "^13.2.0",
     "ffmpeg-static": "^4.4.0",
     "libsodium-wrappers": "^0.7.9",
     "miniget": "^4.2.1",
     "simple-youtube-api": "^5.2.1",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.5",
-    "youtube-dl-exec": "^1.2.6",
+    "youtube-dl-exec": "^1.2.14",
     "ytdl-core": "^4.9.1"
   },
   "devDependencies": {

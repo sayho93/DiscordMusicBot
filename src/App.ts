@@ -12,6 +12,8 @@ const path: string = process.env.NODE_ENV === 'production' ? 'dist/src' : 'src'
 const extension: string = process.env.NODE_ENV === 'production' ? '.js' : '.ts'
 // const path: string = 'dist/src'
 // const extension: string = '.js'
+// const path: string = 'src'
+// const extension: string = '.ts'
 
 fs.readdirSync(`${path}/commands`).forEach(dirs => {
     const commands: string[] = fs.readdirSync(`${path}/commands/${dirs}`).filter(files => files.endsWith(extension))
