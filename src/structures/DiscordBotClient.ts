@@ -46,7 +46,7 @@ export class DiscordBotClient extends Client{
 
         const video = await this.musicData.queue[0].video.fetch()
         this.musicData.queue[0] = Utils.formatVideo(video, this.musicData.queue[0].voiceChannel)
-        // //TODO ytdl suffers from socket connection end in long videos
+        //TODO ytdl suffers from socket connection end in long videos
         // let validate = ytdl.validateURL(this.musicData.queue[0].url)
         // if(!validate) Log.error('Please input a **valid** URL.');
         // const stream = ytdl(this.musicData.queue[0].url, {
@@ -64,8 +64,8 @@ export class DiscordBotClient extends Client{
             r: '100K',
         }, {stdio: ['ignore', 'pipe', 'ignore']})
 
-        const resource: AudioResource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
-        // const resource:AudioResource = createAudioResource(stream.stdout, {inputType: StreamType.Arbitrary})
+        // const resource: AudioResource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
+        const resource:AudioResource = createAudioResource(stream.stdout, {inputType: StreamType.Arbitrary})
         const player: AudioPlayer = createAudioPlayer()
         this.musicData.player = player
 
