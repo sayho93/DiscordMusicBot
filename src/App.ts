@@ -10,6 +10,8 @@ Log.info(JSON.stringify(process.versions))
 const client: DiscordBotClient = new DiscordBotClient({intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MEMBERS, discord.Intents.FLAGS.GUILD_MESSAGES, discord.Intents.FLAGS.GUILD_VOICE_STATES]})
 const path: string = process.env.NODE_ENV === 'production' ? 'dist/src' : 'src'
 const extension: string = process.env.NODE_ENV === 'production' ? '.js' : '.ts'
+// const path: string = 'dist/src'
+// const extension: string = '.js'
 
 fs.readdirSync(`${path}/commands`).forEach(dirs => {
     const commands: string[] = fs.readdirSync(`${path}/commands/${dirs}`).filter(files => files.endsWith(extension))
