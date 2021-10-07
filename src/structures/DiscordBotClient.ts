@@ -8,10 +8,9 @@ import {
     StreamType,
     VoiceConnection
 } from "@discordjs/voice"
-import {raw}  from "youtube-dl-exec"
+// import {raw}  from "youtube-dl-exec"
 import {Log} from '../utils/Logger'
 import Utils from "../utils/Utils"
-import {error} from "winston";
 import ytdl from 'ytdl-core'
 import {HttpsProxyAgent} from "https-proxy-agent"
 
@@ -66,7 +65,7 @@ export class DiscordBotClient extends Client{
             filter: 'audioonly',
             quality: 'highestaudio',
             // highWaterMark: 1 << 25,
-            highWaterMark: 1024 * 1024 * 1024 * 1024 * 1024,
+            highWaterMark: 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024,
             liveBuffer: 4000,
         })
             .on('error', (error: any) => {
