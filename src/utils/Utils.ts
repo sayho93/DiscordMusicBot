@@ -46,7 +46,8 @@ class Utils{
             duration: duration,
             thumbnail: thumbnail,
             voiceChannel: voiceChannel,
-            video: video
+            video: video,
+            videoId: video.raw.id
         }
     }
 

@@ -20,6 +20,7 @@
     "discord-api-types": "^0.23.1",
     "discord.js": "^13.2.0",
     "ffmpeg-static": "^4.4.0",
+    "https-proxy-agent": "^5.0.0",
     "libsodium-wrappers": "^0.7.9",
     "miniget": "^4.2.1",
     "simple-youtube-api": "^5.2.1",
