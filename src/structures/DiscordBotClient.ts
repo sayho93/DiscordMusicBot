@@ -118,13 +118,12 @@ export class DiscordBotClient extends Client{
                 }
             })
             .on('error', (err) => {
+                this.musicData.isPlaying = false
                 if(err.message === 'Status code: 410'){
                     message.channel.send(`Unplayable Song: ${message.client.musicData.queue[0].title}`)
                     return
                 }
                 else{
-                    // console.log(error)
-                    this.musicData.isPlaying = false
                     message.channel.send('error occurred')
                     Utils.onError(err, message)
                     if(this.connection !== null) return this.connection.destroy()
