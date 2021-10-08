@@ -117,11 +117,18 @@ export class DiscordBotClient extends Client{
                     }, 180000)
                 }
             })
-            .on('error', (error) => {
-                console.log(error)
-                this.musicData.isPlaying = false
-                message.channel.send('error occurred')
-                if(this.connection !== null) return this.connection.destroy()
+            .on('error', (err) => {
+                if(err.message === 'Status code: 410'){
+                    message.channel.send(`Unplayable Song: ${message.client.musicData.queue[0].title}`)
+                    return
+                }
+                else{
+                    // console.log(error)
+                    this.musicData.isPlaying = false
+                    message.channel.send('error occurred')
+                    Utils.onError(err, message)
+                    if(this.connection !== null) return this.connection.destroy()
+                }
             })
     }
 }
