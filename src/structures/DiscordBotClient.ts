@@ -11,7 +11,7 @@ import {
 import {raw}  from "youtube-dl-exec"
 import {Log} from '../utils/Logger'
 import Utils from "../utils/Utils"
-// import ytdl from 'ytdl-core'
+import ytdl from 'ytdl-core'
 // import {HttpsProxyAgent} from "https-proxy-agent"
 
 export class MusicType{
@@ -52,16 +52,16 @@ export class DiscordBotClient extends Client{
         // const proxy = 'http://125.141.117.38:80'
         // const agent = new HttpsProxyAgent(proxy)
         // const COOKIE = "SIDCC=AJi4QfELkcwy6l26sj5RQlxZtEDDxDXpsK5dUgHRGvcwwmcnu9ueymWCw7Gdszgvb928PlDNxA; PREF=f6=80&tz=Asia.Seoul&volume=25; _gcl_au=1.1.2135986710.1633348359; APISID=cPgtpj4jUjtt0CxI/AZwBbTfZfYl-pqp4Y; SAPISID=_1urEbnzuus20a0D/AiSvaxYewC0MNFwbi; SID=CAhu40kJ-CU6mfaiDmCo6CvJJIcXnMGSeAxpH-g8me45h1wiPGjYTvxhs7EytKM5iw3xEg.; __Secure-1PAPISID=_1urEbnzuus20a0D/AiSvaxYewC0MNFwbi; __Secure-3PAPISID=_1urEbnzuus20a0D/AiSvaxYewC0MNFwbi"
-        // let validate = ytdl.validateURL(this.musicData.queue[0].url)
-        // if(!validate) Log.error('Please input a **valid** URL.');
+        let validate = ytdl.validateURL(this.musicData.queue[0].url)
+        if(!validate) Log.error('Please input a **valid** URL.');
         // const stream = ytdl(this.musicData.queue[0].videoId, {
-        //     requestOptions: {
-        //         headers: {
-        //             cookie: COOKIE,
-        //             'x-youtube-identity-token': "QUFFLUhqbTQ3VTNPbi12SnhpSEN5NGVzUmxOaDNBMWxEQXw=",
-        //         }
-        //         // agent
-        //     },
+        //     // requestOptions: {
+        //     //     headers: {
+        //     //         cookie: COOKIE,
+        //     //         'x-youtube-identity-token': "QUFFLUhqbTQ3VTNPbi12SnhpSEN5NGVzUmxOaDNBMWxEQXw=",
+        //     //     }
+        //     //     // agent
+        //     // },
         //     filter: 'audioonly',
         //     quality: 'highestaudio',
         //     // highWaterMark: 1 << 25,
