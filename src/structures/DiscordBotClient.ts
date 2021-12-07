@@ -84,8 +84,13 @@ export class DiscordBotClient extends Client{
         const player: AudioPlayer = createAudioPlayer()
         this.musicData.player = player
 
-        player.play(resource)
-        this.connection.subscribe(player)
+        try{
+            player.play(resource)
+            this.connection.subscribe(player)
+        } catch(err){
+            Log.error(err)
+        }
+
         player
             .on(AudioPlayerStatus.Playing, () => {
                 const currentItem = this.musicData.queue[0]
@@ -118,6 +123,7 @@ export class DiscordBotClient extends Client{
                 }
             })
             .on('error', (err) => {
+                Log.error("error occurred")
                 this.musicData.isPlaying = false
                 if(err.message === 'Status code: 410'){
                     message.channel.send(`Unplayable Song: ${message.client.musicData.queue[0].title}`)

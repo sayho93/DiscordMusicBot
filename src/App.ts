@@ -7,7 +7,14 @@ import {Log} from './utils/Logger'
 // Log.info(JSON.stringify(process.env))
 Log.info(JSON.stringify(process.versions))
 
-const client: DiscordBotClient = new DiscordBotClient({intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MEMBERS, discord.Intents.FLAGS.GUILD_MESSAGES, discord.Intents.FLAGS.GUILD_VOICE_STATES]})
+const client: DiscordBotClient = new DiscordBotClient({
+    intents: [
+        discord.Intents.FLAGS.GUILDS,
+        discord.Intents.FLAGS.GUILD_MEMBERS,
+        discord.Intents.FLAGS.GUILD_MESSAGES,
+        discord.Intents.FLAGS.GUILD_VOICE_STATES
+    ]
+})
 const path: string = process.env.NODE_ENV === 'production' ? 'dist/src' : 'src'
 
 fs.readdirSync(`${path}/commands`).forEach(dirs => {
