@@ -8,7 +8,7 @@ import {
     StreamType,
     VoiceConnection
 } from "@discordjs/voice"
-import {raw}  from "youtube-dl-exec"
+// import {raw}  from "youtube-dl-exec"
 import {Log} from '../utils/Logger'
 import Utils from "../utils/Utils"
 import ytdl from 'ytdl-core'
@@ -54,33 +54,33 @@ export class DiscordBotClient extends Client{
         // const COOKIE = "SIDCC=AJi4QfELkcwy6l26sj5RQlxZtEDDxDXpsK5dUgHRGvcwwmcnu9ueymWCw7Gdszgvb928PlDNxA; PREF=f6=80&tz=Asia.Seoul&volume=25; _gcl_au=1.1.2135986710.1633348359; APISID=cPgtpj4jUjtt0CxI/AZwBbTfZfYl-pqp4Y; SAPISID=_1urEbnzuus20a0D/AiSvaxYewC0MNFwbi; SID=CAhu40kJ-CU6mfaiDmCo6CvJJIcXnMGSeAxpH-g8me45h1wiPGjYTvxhs7EytKM5iw3xEg.; __Secure-1PAPISID=_1urEbnzuus20a0D/AiSvaxYewC0MNFwbi; __Secure-3PAPISID=_1urEbnzuus20a0D/AiSvaxYewC0MNFwbi"
         let validate = ytdl.validateURL(this.musicData.queue[0].url)
         if(!validate) Log.error('Please input a **valid** URL.');
-        // const stream = ytdl(this.musicData.queue[0].videoId, {
-        //     // requestOptions: {
-        //     //     headers: {
-        //     //         cookie: COOKIE,
-        //     //         'x-youtube-identity-token': "QUFFLUhqbTQ3VTNPbi12SnhpSEN5NGVzUmxOaDNBMWxEQXw=",
-        //     //     }
-        //     //     // agent
-        //     // },
-        //     filter: 'audioonly',
-        //     quality: 'highestaudio',
-        //     // highWaterMark: 1 << 25,
-        //     highWaterMark: 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024,
-        //     liveBuffer: 4000,
-        // })
-        //     .on('error', (error: any) => {
-        //         console.log(error)
-        //     })
+        const stream = ytdl(this.musicData.queue[0].videoId, {
+            // requestOptions: {
+            //     headers: {
+            //         cookie: COOKIE,
+            //         'x-youtube-identity-token': "QUFFLUhqbTQ3VTNPbi12SnhpSEN5NGVzUmxOaDNBMWxEQXw=",
+            //     }
+            //     // agent
+            // },
+            filter: 'audioonly',
+            quality: 'highestaudio',
+            // highWaterMark: 1 << 25,
+            highWaterMark: 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024,
+            liveBuffer: 4000,
+        })
+            .on('error', (error: any) => {
+                console.log(error)
+            })
 
-        const stream: any = raw(this.musicData.queue[0].url, {
-            o: '-',
-            q: '',
-            f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
-            r: '100K',
-        }, {stdio: ['ignore', 'pipe', 'ignore']})
+        // const stream: any = raw(this.musicData.queue[0].url, {
+        //     o: '-',
+        //     q: '',
+        //     f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
+        //     r: '100K',
+        // }, {stdio: ['ignore', 'pipe', 'ignore']})
 
-        // const resource: AudioResource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
-        const resource:AudioResource = createAudioResource(stream.stdout, {inputType: StreamType.Arbitrary})
+        const resource: AudioResource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
+        // const resource:AudioResource = createAudioResource(stream.stdout, {inputType: StreamType.Arbitrary})
         const player: AudioPlayer = createAudioPlayer()
         this.musicData.player = player
 
