@@ -38,7 +38,8 @@ export default {
                     for(const [idx, item] of videosObj.entries()){
                         if(item.raw.status.privacyStatus !== 'private'){
                             if(idx === 0) thumb = item.thumbnails.high.url
-                            client.musicData.queue.push(Utils.formatVideo(item, voiceChannel))
+                            const formatted = Utils.formatVideo(item, voiceChannel)
+                            if(formatted) client.musicData.queue.push(Utils.formatVideo(item, voiceChannel))
                         }
                     }
 
@@ -67,6 +68,7 @@ export default {
                 try{
                     const video = await youtube.getVideo(query)
                     const song = Utils.formatVideo(video, voiceChannel)
+                    if(!song) return message.reply('Video is either private or it does not exist')
                     client.musicData.queue.push(song)
 
                     const queue = client.musicData.queue

@@ -16,6 +16,7 @@ export default {
                 const member: GuildMember | undefined = guild?.members.cache.get(<Snowflake>interaction.member?.user.id)
 
                 const song = Utils.formatVideo(video, member?.voice.channel)
+                if(!song) return interaction.reply('Video is either private or it does not exist')
                 //TODO FIND VOICE CHANNEL ID ?????
                 client.musicData.queue.push(song)
                 const queue: any[] = client.musicData.queue

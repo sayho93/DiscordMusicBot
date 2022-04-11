@@ -36,6 +36,9 @@ class Utils{
     }
 
     formatVideo = (video: any, voiceChannel: any) => {
+        if(video.title === 'Deleted video'){
+            return null
+        }
         const url = `https://www.youtube.com/watch?v=${video.raw.id}`
         const title = video.raw.snippet.title
         let duration = video.duration !== undefined ? this.formatDuration(video.duration) : null
