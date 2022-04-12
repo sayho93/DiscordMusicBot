@@ -1,5 +1,5 @@
 import {Log} from '../utils/Logger'
-import {DiscordBotClient} from "../structures/DiscordBotClient"
+import {DiscordBotClient} from '../structures/DiscordBotClient'
 
 export default {
     name: 'ready',

@@ -1,21 +1,13 @@
-import {Client, ClientOptions, Collection, MessageEmbed} from "discord.js"
-import {
-    AudioPlayer,
-    AudioPlayerStatus, AudioResource,
-    createAudioPlayer,
-    createAudioResource,
-    joinVoiceChannel,
-    StreamType,
-    VoiceConnection
-} from "@discordjs/voice"
+import {Client, ClientOptions, Collection, MessageEmbed} from 'discord.js'
+import {AudioPlayer, AudioPlayerStatus, AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, StreamType, VoiceConnection} from '@discordjs/voice'
 // import {raw}  from "youtube-dl-exec"
 import {Log} from '../utils/Logger'
-import Utils from "../utils/Utils"
+import * as Utils from '../utils/Utils'
 import ytdl from 'ytdl-core'
 // import {HttpsProxyAgent} from "https-proxy-agent"
 
-export class MusicType{
-    constructor(){
+export class MusicType {
+    constructor() {
         this.queue = []
         this.isPlaying = false
         this.volume = 1
@@ -27,22 +19,23 @@ export class MusicType{
     public player: AudioPlayer | null
 }
 
-export class DiscordBotClient extends Client{
-    constructor(props: ClientOptions){
+export class DiscordBotClient extends Client {
+    public commands: Collection<any, any>
+    public musicData: MusicType
+    public connection: VoiceConnection | null
+
+    constructor(props: ClientOptions) {
         super(props)
         this.commands = new Collection()
         this.musicData = new MusicType()
         this.connection = null
     }
-    public commands: Collection<any, any>
-    public musicData: MusicType
-    public connection: VoiceConnection | null
 
-    public async playSong(message: any){
+    public async playSong(message: any) {
         this.connection = await joinVoiceChannel({
             channelId: this.musicData.queue[0].voiceChannel.id,
             guildId: message.guild.id,
-            adapterCreator: message.guild.voiceAdapterCreator
+            adapterCreator: message.guild.voiceAdapterCreator,
         })
 
         const video = await this.musicData.queue[0].video.fetch()
@@ -53,7 +46,7 @@ export class DiscordBotClient extends Client{
         // const agent = new HttpsProxyAgent(proxy)
         // const COOKIE = "SIDCC=AJi4QfELkcwy6l26sj5RQlxZtEDDxDXpsK5dUgHRGvcwwmcnu9ueymWCw7Gdszgvb928PlDNxA; PREF=f6=80&tz=Asia.Seoul&volume=25; _gcl_au=1.1.2135986710.1633348359; APISID=cPgtpj4jUjtt0CxI/AZwBbTfZfYl-pqp4Y; SAPISID=_1urEbnzuus20a0D/AiSvaxYewC0MNFwbi; SID=CAhu40kJ-CU6mfaiDmCo6CvJJIcXnMGSeAxpH-g8me45h1wiPGjYTvxhs7EytKM5iw3xEg.; __Secure-1PAPISID=_1urEbnzuus20a0D/AiSvaxYewC0MNFwbi; __Secure-3PAPISID=_1urEbnzuus20a0D/AiSvaxYewC0MNFwbi"
         let validate = ytdl.validateURL(this.musicData.queue[0].url)
-        if(!validate) Log.error('Please input a **valid** URL.');
+        if (!validate) Log.error('Please input a **valid** URL.')
         const stream = ytdl(this.musicData.queue[0].videoId, {
             // requestOptions: {
             //     headers: {
@@ -67,10 +60,9 @@ export class DiscordBotClient extends Client{
             // highWaterMark: 1 << 25,
             highWaterMark: 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024,
             liveBuffer: 4000,
+        }).on('error', (error: any) => {
+            console.log(error)
         })
-            .on('error', (error: any) => {
-                console.log(error)
-            })
 
         // const stream: any = raw(this.musicData.queue[0].url, {
         //     o: '-',
@@ -84,17 +76,17 @@ export class DiscordBotClient extends Client{
         const player: AudioPlayer = createAudioPlayer()
         this.musicData.player = player
 
-        try{
+        try {
             player.play(resource)
             this.connection.subscribe(player)
-        } catch(err){
+        } catch (err) {
             Log.error(err)
         }
 
         player
             .on(AudioPlayerStatus.Playing, () => {
                 const currentItem = this.musicData.queue[0]
-                if(currentItem !== undefined){
+                if (currentItem !== undefined) {
                     const embed: MessageEmbed = new MessageEmbed()
                         .setColor('#0099ff')
                         .setTitle(`:: Currently playing :arrow_forward: ::`)
@@ -106,33 +98,32 @@ export class DiscordBotClient extends Client{
                 }
             })
             .on(AudioPlayerStatus.Idle, () => {
-                if(this.musicData.queue.length > 1){
+                if (this.musicData.queue.length > 1) {
                     Log.debug('queue length is not zero')
                     this.musicData.queue.shift()
                     return this.playSong(message)
-                } else{
+                } else {
                     Log.debug('queue empty')
                     this.musicData.isPlaying = false
                     setTimeout(() => {
-                        if(this.musicData.queue.length <= 1 && !this.musicData.isPlaying){
+                        if (this.musicData.queue.length <= 1 && !this.musicData.isPlaying) {
                             this.musicData = new MusicType()
                             message.channel.send(`Disconnected from channel due to inactivity`)
-                            if(this.connection !== null) this.connection.destroy()
+                            if (this.connection !== null) this.connection.destroy()
                         }
                     }, 180000)
                 }
             })
-            .on('error', (err) => {
-                Log.error("error occurred")
+            .on('error', err => {
+                Log.error('error occurred')
                 this.musicData.isPlaying = false
-                if(err.message === 'Status code: 410'){
+                if (err.message === 'Status code: 410') {
                     message.channel.send(`Unplayable Song: ${message.client.musicData.queue[0].title}`)
                     return
-                }
-                else{
+                } else {
                     message.channel.send('error occurred')
                     Utils.onError(err, message)
-                    if(this.connection !== null) return this.connection.destroy()
+                    if (this.connection !== null) return this.connection.destroy()
                 }
             })
     }
