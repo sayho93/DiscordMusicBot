@@ -1,5 +1,15 @@
-import {Message, MessageEmbed} from 'discord.js'
+import {Message, MessageEmbed, StageChannel, VoiceChannel} from 'discord.js'
 import {Log} from './Logger'
+
+export type Song = {
+    url: string
+    title: string
+    duration: string | null
+    thumbnail: string
+    voiceChannel: VoiceChannel | StageChannel | null | undefined
+    video: any
+    videoId: string
+}
 
 export const formatDuration = (durationObj: any) => {
     return `${durationObj.hours ? durationObj.hours + ':' : ''}${durationObj.minutes ? durationObj.minutes : '00'}:${
@@ -7,24 +17,32 @@ export const formatDuration = (durationObj: any) => {
     }`
 }
 
-export const formatVideo = (video: any, voiceChannel: any) => {
+export const formatVideo = (video: any, voiceChannel: VoiceChannel | StageChannel | null | undefined): Song | null => {
     if (video.title === 'Deleted video') {
         return null
     }
-    const url = `https://www.youtube.com/watch?v=${video.raw.id}`
-    const title = video.raw.snippet.title
-    let duration = video.duration !== undefined ? formatDuration(video.duration) : null
-    const thumbnail = video.thumbnails.high.url
+    let duration: string | null = video.duration !== undefined ? formatDuration(video.duration) : null
     if (duration === '00:00') duration = 'Live Stream'
     return {
-        url: url,
-        title: title,
-        duration: duration,
-        thumbnail: thumbnail,
-        voiceChannel: voiceChannel,
+        url: `https://www.youtube.com/watch?v=${video.raw.id}`,
+        title: video.raw.snippet.title,
+        duration,
+        thumbnail: video.thumbnails.high.url,
+        voiceChannel,
         video: video,
         videoId: video.raw.id,
     }
+}
+
+export const formatMessageEmbed = (url: string, queuedCount: number, queueLength: number, title: string, thumbnail: string) => {
+    return new MessageEmbed()
+        .setColor('#ffffff')
+        .setTitle('Queued')
+        .setURL(url)
+        .setDescription(`Queued ${queuedCount} track${queuedCount === 1 ? '' : 's'}`)
+        .addField(`Total Queue`, `${queueLength} tracks`)
+        .addField(`Track`, `:musical_note:  ${title} :musical_note: has been added to queue`)
+        .setThumbnail(thumbnail)
 }
 
 export const onError = (err: unknown, message: Message) => {

@@ -2,8 +2,8 @@ import {Client, ClientOptions, Collection, MessageEmbed} from 'discord.js'
 import {AudioPlayer, AudioPlayerStatus, AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, StreamType, VoiceConnection} from '@discordjs/voice'
 // import {raw}  from "youtube-dl-exec"
 import {Log} from '../utils/Logger'
-import * as Utils from '../utils/Utils'
 import ytdl from 'ytdl-core'
+import {formatVideo, onError, Song} from '../utils/Utils'
 // import {HttpsProxyAgent} from "https-proxy-agent"
 
 export class MusicType {
@@ -13,7 +13,7 @@ export class MusicType {
         this.volume = 1
         this.player = null
     }
-    public queue: any[]
+    public queue: Song[]
     public isPlaying: Boolean
     public volume: number
     public player: AudioPlayer | null
@@ -32,6 +32,15 @@ export class DiscordBotClient extends Client {
     }
 
     public async playSong(message: any) {
+        if (!this.musicData.queue.length) {
+            message.channel.send('No songs in queue')
+            return
+        }
+
+        if (!this.musicData.queue[0].voiceChannel) {
+            message.channel.send('Voice channel info missing')
+            return
+        }
         this.connection = await joinVoiceChannel({
             channelId: this.musicData.queue[0].voiceChannel.id,
             guildId: message.guild.id,
@@ -39,40 +48,25 @@ export class DiscordBotClient extends Client {
         })
 
         const video = await this.musicData.queue[0].video.fetch()
-        this.musicData.queue[0] = Utils.formatVideo(video, this.musicData.queue[0].voiceChannel)
+        const nextSong: Song | null = formatVideo(video, this.musicData.queue[0].voiceChannel)
+        if (!nextSong) {
+            message.channel.send('Could fetch video')
+            return
+        }
+        this.musicData.queue[0] = nextSong
 
-        // TODO ytdl suffers from socket connection end in long videos
-        // const proxy = 'http://125.141.117.38:80'
-        // const agent = new HttpsProxyAgent(proxy)
-        // const COOKIE = "SIDCC=AJi4QfELkcwy6l26sj5RQlxZtEDDxDXpsK5dUgHRGvcwwmcnu9ueymWCw7Gdszgvb928PlDNxA; PREF=f6=80&tz=Asia.Seoul&volume=25; _gcl_au=1.1.2135986710.1633348359; APISID=cPgtpj4jUjtt0CxI/AZwBbTfZfYl-pqp4Y; SAPISID=_1urEbnzuus20a0D/AiSvaxYewC0MNFwbi; SID=CAhu40kJ-CU6mfaiDmCo6CvJJIcXnMGSeAxpH-g8me45h1wiPGjYTvxhs7EytKM5iw3xEg.; __Secure-1PAPISID=_1urEbnzuus20a0D/AiSvaxYewC0MNFwbi; __Secure-3PAPISID=_1urEbnzuus20a0D/AiSvaxYewC0MNFwbi"
         let validate = ytdl.validateURL(this.musicData.queue[0].url)
         if (!validate) Log.error('Please input a **valid** URL.')
         const stream = ytdl(this.musicData.queue[0].videoId, {
-            // requestOptions: {
-            //     headers: {
-            //         cookie: COOKIE,
-            //         'x-youtube-identity-token': "QUFFLUhqbTQ3VTNPbi12SnhpSEN5NGVzUmxOaDNBMWxEQXw=",
-            //     }
-            //     // agent
-            // },
             filter: 'audioonly',
             quality: 'highestaudio',
-            // highWaterMark: 1 << 25,
             highWaterMark: 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024,
             liveBuffer: 4000,
         }).on('error', (error: any) => {
             console.log(error)
         })
 
-        // const stream: any = raw(this.musicData.queue[0].url, {
-        //     o: '-',
-        //     q: '',
-        //     f: 'bestaudio[ext=webm+acodec=opus+asr=48000]/bestaudio',
-        //     r: '100K',
-        // }, {stdio: ['ignore', 'pipe', 'ignore']})
-
         const resource: AudioResource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
-        // const resource:AudioResource = createAudioResource(stream.stdout, {inputType: StreamType.Arbitrary})
         const player: AudioPlayer = createAudioPlayer()
         this.musicData.player = player
 
@@ -122,7 +116,7 @@ export class DiscordBotClient extends Client {
                     return
                 } else {
                     message.channel.send('error occurred')
-                    Utils.onError(err, message)
+                    onError(err, message)
                     if (this.connection !== null) return this.connection.destroy()
                 }
             })
