@@ -1,44 +1,28 @@
 import {Client, ClientOptions, Collection, MessageEmbed} from 'discord.js'
 import {AudioPlayer, AudioPlayerStatus, AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, StreamType, VoiceConnection} from '@discordjs/voice'
-// import {raw}  from "youtube-dl-exec"
-import {Log} from '../utils/Logger'
+import {Log} from '../utils/logger'
 import ytdl from 'ytdl-core'
-import {formatVideo, onError, Song} from '../utils/Utils'
+import {formatVideo, onError} from '../utils/utils'
+import {DiscordBotClientObj, MusicType, Song} from '../index'
 
-// import {HttpsProxyAgent} from "https-proxy-agent"
-
-export class MusicType {
-    constructor() {
-        this.queue = []
-        this.isPlaying = false
-        this.volume = 1
-        this.player = null
+const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
+    let user = null
+    const client: Client = new Client(props)
+    const commands: Collection<string, any> = new Collection()
+    let musicData: MusicType = {
+        queue: [],
+        isPlaying: false,
+        volume: 1,
+        player: null,
     }
+    let connection: VoiceConnection | null = null
 
-    public queue: Song[]
-    public isPlaying: Boolean
-    public volume: number
-    public player: AudioPlayer | null
-}
-
-export class DiscordBotClient extends Client {
-    public commands: Collection<any, any>
-    public musicData: MusicType
-    public connection: VoiceConnection | null
-
-    constructor(props: ClientOptions) {
-        super(props)
-        this.commands = new Collection()
-        this.musicData = new MusicType()
-        this.connection = null
-    }
-
-    private async createPlayer(message: any) {
+    const createPlayer = async (message: any) => {
         const player: AudioPlayer = createAudioPlayer()
 
         player
             .on(AudioPlayerStatus.Playing, () => {
-                const currentItem = this.musicData.queue[0]
+                const currentItem = musicData.queue[0]
                 if (currentItem !== undefined) {
                     const embed: MessageEmbed = new MessageEmbed()
                         .setColor('#0099ff')
@@ -51,83 +35,90 @@ export class DiscordBotClient extends Client {
                 }
             })
             .on(AudioPlayerStatus.Idle, () => {
-                if (this.musicData.queue.length > 1) {
+                if (musicData.queue.length > 1) {
                     Log.debug('queue length is not zero')
-                    this.musicData.queue.shift()
-                    return this.playSong(message.channel)
+                    musicData.queue.shift()
+                    return playSong(message.channel)
                 } else {
                     Log.debug('queue empty')
-                    this.musicData.isPlaying = false
+                    musicData.isPlaying = false
                     setTimeout(() => {
-                        if (this.musicData.queue.length <= 1 && !this.musicData.isPlaying) {
-                            this.musicData = new MusicType()
+                        if (musicData.queue.length <= 1 && !musicData.isPlaying) {
+                            musicData = {
+                                queue: [],
+                                isPlaying: false,
+                                volume: 1,
+                                player: null,
+                            }
                             message.channel.send(`Disconnected from channel due to inactivity`)
-                            if (this.connection !== null) this.connection.destroy()
+                            if (connection !== null) connection.destroy()
                         }
                     }, 180000)
                 }
             })
             .on('error', err => {
                 Log.error('error occurred')
-                this.musicData.isPlaying = false
+                musicData.isPlaying = false
                 if (err.message === 'Status code: 410') {
                     message.channel.send(`Unplayable Song: ${message.client.musicData.queue[0].title}`)
                     return
                 } else {
                     message.channel.send('error occurred')
                     onError(err, message)
-                    if (this.connection !== null) return this.connection.destroy()
+                    if (connection !== null) return connection.destroy()
                 }
             })
         return player
     }
 
-    public async playSong(message: any) {
-        if (!this.musicData.queue.length) {
+    const playSong = async (message: any) => {
+        if (!musicData.queue.length) {
             message.channel.send('No songs in queue')
             return
         }
 
-        if (!this.musicData.queue[0].voiceChannel) {
-            message.channel.send('Voice channel info missing')
-            return
-        }
-        this.connection = await joinVoiceChannel({
-            channelId: this.musicData.queue[0].voiceChannel.id,
+        connection = await joinVoiceChannel({
+            channelId: musicData.queue[0].voiceChannel.id,
             guildId: message.guild.id,
             adapterCreator: message.guild.voiceAdapterCreator,
         })
 
-        const video = await this.musicData.queue[0].video.fetch()
-        const nextSong: Song | null = formatVideo(video, this.musicData.queue[0].voiceChannel)
+        const video = await musicData.queue[0].video.fetch()
+        const nextSong: Song | null = formatVideo(video, musicData.queue[0].voiceChannel)
         if (!nextSong) {
             message.channel.send('Could fetch video')
             return
         }
-        this.musicData.queue[0] = nextSong
+        musicData.queue[0] = nextSong
 
-        let validate = ytdl.validateURL(this.musicData.queue[0].url)
-        if (!validate) Log.error('Please input a **valid** URL.')
-        const stream = ytdl(this.musicData.queue[0].videoId, {
+        let validate = ytdl.validateURL(musicData.queue[0].url)
+        if (!validate) {
+            Log.error('Please input a **valid** URL.')
+            message.reply('Please input a **valid** URL.')
+        }
+        const stream = ytdl(musicData.queue[0].videoId, {
             filter: 'audioonly',
             quality: 'highestaudio',
             highWaterMark: 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024,
             liveBuffer: 4000,
         }).on('error', (error: any) => {
+            message.reply(error)
             console.log(error)
         })
 
         const resource: AudioResource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
-        if (!this.musicData.player) {
-            this.musicData.player = await this.createPlayer(message)
-        }
+        if (!musicData.player) musicData.player = await createPlayer(message)
 
         try {
-            this.musicData.player.play(resource)
-            this.connection.subscribe(this.musicData.player)
+            musicData.player.play(resource)
+            connection.subscribe(musicData.player)
         } catch (err) {
             Log.error(err)
             message.channel.send('Error occurred on player.play()')
         }
     }
+
+    return {commands, musicData, connection, playSong, client, user}
 }
+
+export default DiscordBotClient

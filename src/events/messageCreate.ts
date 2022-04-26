@@ -1,12 +1,12 @@
 import {Message} from 'discord.js'
-import {Log} from '../utils/Logger'
+import {Log} from '../utils/logger'
 import {prefix} from '../../config.json'
-import {DiscordBotClient} from '../structures/DiscordBotClient'
-import * as Utils from '../utils/Utils'
+import {DiscordBotClientObj} from '../index'
+import {onError} from '../utils/utils'
 
 export default {
     name: 'messageCreate',
-    execute: async (message: Message, client: DiscordBotClient) => {
+    execute: async (message: Message, client: DiscordBotClientObj) => {
         Log.info(`message received ${message.content}`)
         if (message.author.bot) return
 
@@ -28,7 +28,7 @@ export default {
         try {
             await command.execute(message, client)
         } catch (err) {
-            Utils.onError(err, message)
+            onError(err, message)
             await message.reply({content: 'There was an error while executing this command'})
         }
     },

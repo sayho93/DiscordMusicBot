@@ -1,10 +1,10 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
 import {MessageActionRow, MessageSelectMenu, VoiceChannel, StageChannel} from 'discord.js'
-import {formatMessageEmbed, formatVideo, onError, Song} from '../../utils/Utils'
+import {formatMessageEmbed, formatVideo, onError} from '../../utils/utils'
 import {prefix, youtubeAPI} from '../../../config.json'
-import {Log} from '../../utils/Logger'
-import {DiscordBotClient} from '../../structures/DiscordBotClient'
+import {Log} from '../../utils/logger'
 import {Message} from 'discord.js'
+import {DiscordBotClientObj, Song} from '../../index'
 // @ts-ignore
 import Youtube from 'simple-youtube-api'
 
@@ -12,7 +12,7 @@ const Play = () => {
     const data = new SlashCommandBuilder().setName('p').setDescription('Plays music with uri')
     const youtube = new Youtube(youtubeAPI)
 
-    const playlistHandler = async (url: string, voiceChannel: VoiceChannel | StageChannel | null, client: DiscordBotClient, message: Message) => {
+    const playlistHandler = async (url: string, voiceChannel: VoiceChannel | StageChannel | null, client: DiscordBotClientObj, message: Message) => {
         try {
             const playlist = await youtube.getPlaylist(url)
             const videosObj = await playlist.getVideos()
@@ -45,7 +45,7 @@ const Play = () => {
         }
     }
 
-    const singleVidHandler = async (url: string, voiceChannel: VoiceChannel | StageChannel, client: DiscordBotClient, message: Message) => {
+    const singleVidHandler = async (url: string, voiceChannel: VoiceChannel | StageChannel, client: DiscordBotClientObj, message: Message) => {
         try {
             const video = await youtube.getVideo(url)
             const song: Song | null = formatVideo(video, voiceChannel)
@@ -98,7 +98,7 @@ const Play = () => {
         }
     }
 
-    const execute = async (message: Message, client: DiscordBotClient) => {
+    const execute = async (message: Message, client: DiscordBotClientObj) => {
         const args: string[] = message.content.slice(prefix.length).trim().split(/ +/g)
         if (args.length < 2) {
             await message.reply(`parameter count doesn't match`)

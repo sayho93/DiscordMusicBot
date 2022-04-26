@@ -1,15 +1,6 @@
 import {Message, MessageEmbed, StageChannel, VoiceChannel} from 'discord.js'
-import {Log} from './Logger'
-
-export type Song = {
-    url: string
-    title: string
-    duration: string | null
-    thumbnail: string
-    voiceChannel: VoiceChannel | StageChannel | null | undefined
-    video: any
-    videoId: string
-}
+import {Log} from './logger'
+import {Song} from '../index'
 
 export const formatDuration = (durationObj: any) => {
     return `${durationObj.hours ? durationObj.hours + ':' : ''}${durationObj.minutes ? durationObj.minutes : '00'}:${

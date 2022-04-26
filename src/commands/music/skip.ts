@@ -1,11 +1,11 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
-import {Log} from '../../utils/Logger'
+import {Log} from '../../utils/logger'
 import {Message} from 'discord.js'
-import {DiscordBotClient} from '../../structures/DiscordBotClient'
+import {DiscordBotClientObj} from '../../index'
 
 export default {
     data: new SlashCommandBuilder().setName('s').setDescription('Skip current playing music'),
-    execute: async (message: Message, client: DiscordBotClient) => {
+    execute: async (message: Message, client: DiscordBotClientObj) => {
         if (!message.member?.voice.channel) return message.reply('You have to be in a voice channel to see queue')
         Log.verbose('Skipping song...')
         if (client.musicData.queue.length <= 1) {
