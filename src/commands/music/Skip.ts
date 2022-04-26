@@ -15,6 +15,6 @@ export default {
             return
         }
         client.musicData.queue.shift()
-        await client.playSong(message)
+        await client.playSong(message.channel)
     },
 }

@@ -4,6 +4,7 @@ import {AudioPlayer, AudioPlayerStatus, AudioResource, createAudioPlayer, create
 import {Log} from '../utils/Logger'
 import ytdl from 'ytdl-core'
 import {formatVideo, onError, Song} from '../utils/Utils'
+
 // import {HttpsProxyAgent} from "https-proxy-agent"
 
 export class MusicType {
@@ -13,6 +14,7 @@ export class MusicType {
         this.volume = 1
         this.player = null
     }
+
     public queue: Song[]
     public isPlaying: Boolean
     public volume: number
@@ -29,6 +31,55 @@ export class DiscordBotClient extends Client {
         this.commands = new Collection()
         this.musicData = new MusicType()
         this.connection = null
+    }
+
+    private async createPlayer(message: any) {
+        const player: AudioPlayer = createAudioPlayer()
+
+        player
+            .on(AudioPlayerStatus.Playing, () => {
+                const currentItem = this.musicData.queue[0]
+                if (currentItem !== undefined) {
+                    const embed: MessageEmbed = new MessageEmbed()
+                        .setColor('#0099ff')
+                        .setTitle(`:: Currently playing :arrow_forward: ::`)
+                        .setDescription(`${currentItem.title} (${currentItem.duration})`)
+                        .setURL(currentItem.url)
+                        .setThumbnail(currentItem.thumbnail)
+                    message.channel.send({embeds: [embed]})
+                    Log.info(`Currently playing ${currentItem.title}`)
+                }
+            })
+            .on(AudioPlayerStatus.Idle, () => {
+                if (this.musicData.queue.length > 1) {
+                    Log.debug('queue length is not zero')
+                    this.musicData.queue.shift()
+                    return this.playSong(message.channel)
+                } else {
+                    Log.debug('queue empty')
+                    this.musicData.isPlaying = false
+                    setTimeout(() => {
+                        if (this.musicData.queue.length <= 1 && !this.musicData.isPlaying) {
+                            this.musicData = new MusicType()
+                            message.channel.send(`Disconnected from channel due to inactivity`)
+                            if (this.connection !== null) this.connection.destroy()
+                        }
+                    }, 180000)
+                }
+            })
+            .on('error', err => {
+                Log.error('error occurred')
+                this.musicData.isPlaying = false
+                if (err.message === 'Status code: 410') {
+                    message.channel.send(`Unplayable Song: ${message.client.musicData.queue[0].title}`)
+                    return
+                } else {
+                    message.channel.send('error occurred')
+                    onError(err, message)
+                    if (this.connection !== null) return this.connection.destroy()
+                }
+            })
+        return player
     }
 
     public async playSong(message: any) {
@@ -67,58 +118,16 @@ export class DiscordBotClient extends Client {
         })
 
         const resource: AudioResource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
-        const player: AudioPlayer = createAudioPlayer()
-        this.musicData.player = player
-
-        try {
-            player.play(resource)
-            this.connection.subscribe(player)
-        } catch (err) {
-            Log.error(err)
+        if (!this.musicData.player) {
+            this.musicData.player = await this.createPlayer(message)
         }
 
-        player
-            .on(AudioPlayerStatus.Playing, () => {
-                const currentItem = this.musicData.queue[0]
-                if (currentItem !== undefined) {
-                    const embed: MessageEmbed = new MessageEmbed()
-                        .setColor('#0099ff')
-                        .setTitle(`:: Currently playing :arrow_forward: ::`)
-                        .setDescription(`${currentItem.title} (${currentItem.duration})`)
-                        .setURL(currentItem.url)
-                        .setThumbnail(currentItem.thumbnail)
-                    message.channel.send({embeds: [embed]})
-                    Log.info(`Currently playing ${currentItem.title}`)
-                }
-            })
-            .on(AudioPlayerStatus.Idle, () => {
-                if (this.musicData.queue.length > 1) {
-                    Log.debug('queue length is not zero')
-                    this.musicData.queue.shift()
-                    return this.playSong(message)
-                } else {
-                    Log.debug('queue empty')
-                    this.musicData.isPlaying = false
-                    setTimeout(() => {
-                        if (this.musicData.queue.length <= 1 && !this.musicData.isPlaying) {
-                            this.musicData = new MusicType()
-                            message.channel.send(`Disconnected from channel due to inactivity`)
-                            if (this.connection !== null) this.connection.destroy()
-                        }
-                    }, 180000)
-                }
-            })
-            .on('error', err => {
-                Log.error('error occurred')
-                this.musicData.isPlaying = false
-                if (err.message === 'Status code: 410') {
-                    message.channel.send(`Unplayable Song: ${message.client.musicData.queue[0].title}`)
-                    return
-                } else {
-                    message.channel.send('error occurred')
-                    onError(err, message)
-                    if (this.connection !== null) return this.connection.destroy()
-                }
-            })
+        try {
+            this.musicData.player.play(resource)
+            this.connection.subscribe(this.musicData.player)
+        } catch (err) {
+            Log.error(err)
+            message.channel.send('Error occurred on player.play()')
+        }
     }
 }
