@@ -9,8 +9,10 @@ export default {
         if (!message.member?.voice.channel) return message.reply('You have to be in a voice channel to make bot leave')
         client.musicData.queue = []
         client.musicData.isPlaying = false
+
         try {
-            client.connection?.destroy()
+            client.getConnection()?.destroy()
+            client.connection = null
         } catch (err) {
             onError(err, message)
         }

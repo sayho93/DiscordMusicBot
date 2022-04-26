@@ -34,27 +34,29 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
                     Log.info(`Currently playing ${currentItem.title}`)
                 }
             })
-            .on(AudioPlayerStatus.Idle, () => {
+            .on(AudioPlayerStatus.Idle, async () => {
                 if (musicData.queue.length > 1) {
                     Log.debug('queue length is not zero')
                     musicData.queue.shift()
-                    return playSong(message.channel)
-                } else {
-                    Log.debug('queue empty')
-                    musicData.isPlaying = false
-                    setTimeout(() => {
-                        if (musicData.queue.length <= 1 && !musicData.isPlaying) {
-                            musicData = {
-                                queue: [],
-                                isPlaying: false,
-                                volume: 1,
-                                player: null,
-                            }
-                            message.channel.send(`Disconnected from channel due to inactivity`)
-                            if (connection !== null) connection.destroy()
-                        }
-                    }, 180000)
+                    await playSong(message.channel)
+                    return
                 }
+
+                Log.debug('queue empty')
+                musicData.isPlaying = false
+                setTimeout(() => {
+                    if (musicData.queue.length <= 1 && !musicData.isPlaying) {
+                        musicData = {
+                            queue: [],
+                            isPlaying: false,
+                            volume: 1,
+                            player: null,
+                        }
+                        message.channel.send(`Disconnected from channel due to inactivity`)
+                        connection?.destroy()
+                        connection = null
+                    }
+                }, 1000)
             })
             .on('error', err => {
                 Log.error('error occurred')
@@ -62,11 +64,11 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
                 if (err.message === 'Status code: 410') {
                     message.channel.send(`Unplayable Song: ${message.client.musicData.queue[0].title}`)
                     return
-                } else {
-                    message.channel.send('error occurred')
-                    onError(err, message)
-                    if (connection !== null) return connection.destroy()
                 }
+                message.channel.send('error occurred')
+                onError(err, message)
+                connection?.destroy()
+                connection = null
             })
         return player
     }
@@ -76,12 +78,6 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
             message.channel.send('No songs in queue')
             return
         }
-
-        connection = await joinVoiceChannel({
-            channelId: musicData.queue[0].voiceChannel.id,
-            guildId: message.guild.id,
-            adapterCreator: message.guild.voiceAdapterCreator,
-        })
 
         const video = await musicData.queue[0].video.fetch()
         const nextSong: Song | null = formatVideo(video, musicData.queue[0].voiceChannel)
@@ -107,6 +103,13 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
         })
 
         const resource: AudioResource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
+        if (!connection) {
+            connection = joinVoiceChannel({
+                channelId: musicData.queue[0].voiceChannel.id,
+                guildId: message.guild.id,
+                adapterCreator: message.guild.voiceAdapterCreator,
+            })
+        }
         if (!musicData.player) musicData.player = await createPlayer(message)
 
         try {
@@ -118,7 +121,16 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
         }
     }
 
-    return {commands, musicData, connection, playSong, client, user}
+    return {
+        commands,
+        connection,
+        getConnection: () => connection,
+        musicData,
+        getMusicData: () => musicData,
+        playSong,
+        client,
+        user,
+    }
 }
 
 export default DiscordBotClient

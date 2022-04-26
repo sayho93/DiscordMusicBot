@@ -20,7 +20,8 @@ export default {
                         player: null,
                     }
                     channel.send('바윙~')
-                    client.connection?.destroy()
+                    client.getConnection()?.destroy()
+                    client.connection = null
                 }
             }, 5000)
             // 180000

@@ -22,8 +22,10 @@ declare type MusicType = {
 declare type DiscordBotClientObj = {
     user: any
     commands: Collection<string, any>
-    musicData: MusicType
     connection: VoiceConnection | null
+    getConnection: Function
+    musicData: MusicType
+    getMusicData: Function
     playSong: Function
     client: Client
 }

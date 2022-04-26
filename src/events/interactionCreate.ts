@@ -18,16 +18,18 @@ const InteractionCreate = () => {
                 return interaction.reply('Video is either private or it does not exist')
             }
 
-            discordBotClient.musicData.queue.push(song)
-            const queue: Song[] = discordBotClient.musicData.queue
+            const musicData = discordBotClient.getMusicData()
+
+            musicData.queue.push(song)
+            const queue: Song[] = musicData.queue
             Log.info(`${song.title} added to queue`)
             Log.info(`queue length: ${queue.length}`)
 
             await interaction.reply({embeds: [formatMessageEmbed(interaction.values[0], 1, queue.length, song.title, song.thumbnail)]})
 
-            if (!discordBotClient.musicData.isPlaying) {
+            if (!musicData.isPlaying) {
                 discordBotClient.musicData.isPlaying = true
-                return discordBotClient.playSong(interaction)
+                await discordBotClient.playSong(interaction)
             }
         } catch (err) {
             if (err instanceof Error) Log.error(err.stack)
