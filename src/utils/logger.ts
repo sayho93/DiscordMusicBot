@@ -1,12 +1,13 @@
 import winston from 'winston'
 import winstonDaily from 'winston-daily-rotate-file'
 import * as fs from 'fs'
+import {TransformableInfo} from 'logform'
 
 const logDir = 'logs' // logs 디렉토리 하위에 로그 파일 저장
 const {combine, timestamp, printf, label} = winston.format
 
 // Define log format
-const logFormat = printf((info: any) => {
+const logFormat = printf((info: TransformableInfo) => {
     return `${info.timestamp} [${info.label}] ${info.level}: ${info.message}`
 })
 
@@ -14,9 +15,7 @@ const logFormat = printf((info: any) => {
  * Log Level
  * error: 0, warn: 1, info: 2, http: 3, verbose: 4, debug: 5, silly: 6
  */
-if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir)
-}
+if (!fs.existsSync(logDir)) fs.mkdirSync(logDir)
 
 const options = {
     file: {

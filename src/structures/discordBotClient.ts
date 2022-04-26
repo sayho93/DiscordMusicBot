@@ -56,7 +56,7 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
                         connection?.destroy()
                         connection = null
                     }
-                }, 1000)
+                }, 180000)
             })
             .on('error', err => {
                 Log.error('error occurred')
