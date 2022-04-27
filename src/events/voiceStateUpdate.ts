@@ -1,6 +1,6 @@
 import {VoiceState} from 'discord.js'
-import {Log} from '../utils/logger'
-import {DiscordBotClientObj} from '../index'
+import {Log} from '#utils/logger'
+import {DiscordBotClientObj} from '#root/src'
 
 export default {
     name: 'voiceStateUpdate',

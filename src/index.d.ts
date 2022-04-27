@@ -1,4 +1,3 @@
-import {Song} from './utils/utils'
 import {AudioPlayer, VoiceConnection} from '@discordjs/voice'
 import {Client, Collection, StageChannel, VoiceChannel} from 'discord.js'
 
@@ -7,7 +6,7 @@ declare type Song = {
     title: string
     duration: string | null
     thumbnail: string
-    voiceChannel: VoiceChannel | StageChannel | null | undefined
+    voiceChannel: VoiceChannel | StageChannel
     video: any
     videoId: string
 }

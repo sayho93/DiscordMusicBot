@@ -1,8 +1,8 @@
 import {Message} from 'discord.js'
-import {Log} from '../utils/logger'
-import {prefix} from '../../config.json'
-import {DiscordBotClientObj} from '../index'
-import {onError} from '../utils/utils'
+import {Log} from '#utils/logger'
+import Config from '#configs/config'
+import {DiscordBotClientObj} from '#root/src'
+import {onError} from '#utils/utils'
 
 export default {
     name: 'messageCreate',
@@ -10,12 +10,12 @@ export default {
         Log.info(`message received ${message.content}`)
         if (message.author.bot) return
 
-        if (!message.content.startsWith(prefix)) {
-            Log.verbose(`doesn't match prefix '${prefix}' skipping...`)
+        if (!message.content.startsWith(Config.prefix)) {
+            Log.verbose(`doesn't match prefix '${Config.prefix}' skipping...`)
             return
         }
 
-        const args: string[] = message.content.slice(prefix.length).trim().split(/ +/g)
+        const args: string[] = message.content.slice(Config.prefix.length).trim().split(/ +/g)
         const commandName: string = args.shift()?.toLowerCase() ?? ''
         Log.info(`command: ${commandName}`)
 

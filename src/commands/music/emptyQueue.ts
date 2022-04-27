@@ -1,6 +1,6 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
 import {Message} from 'discord.js'
-import {DiscordBotClientObj} from '../../index'
+import {DiscordBotClientObj} from '#root/src'
 
 export default {
     data: new SlashCommandBuilder().setName('eq').setDescription('Stop current playing music'),
@@ -10,7 +10,6 @@ export default {
 
         client.musicData.queue = [client.musicData.queue[0]]
         client.musicData.isPlaying = false
-        console.log(client.musicData)
         await message.reply('queue cleared')
     },
 }

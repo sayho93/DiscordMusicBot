@@ -1,10 +1,12 @@
-import {Log} from '../utils/logger'
+import {Log} from '#utils/logger'
 import {CommandInteraction, Guild, GuildMember, Interaction, SelectMenuInteraction, Snowflake} from 'discord.js'
-const Youtube = require('simple-youtube-api')
-import {youtubeAPI} from '../../config.json'
-import {formatMessageEmbed, formatVideo} from '../utils/utils'
+// @ts-ignore
+import Youtube from 'simple-youtube-api/src/index.js'
+// const Youtube = require('simple-youtube-api')
+import Config from '#configs/Config'
+import {formatMessageEmbed, formatVideo} from '#utils/utils'
 import {DiscordBotClientObj, Song} from '../index'
-const youtube = new Youtube(youtubeAPI)
+const youtube = new Youtube(Config.youtubeAPI)
 
 const InteractionCreate = () => {
     const selectMenuHandler = async (interaction: SelectMenuInteraction, discordBotClient: DiscordBotClientObj) => {
@@ -13,7 +15,10 @@ const InteractionCreate = () => {
             const guild: Guild | undefined = discordBotClient.client.guilds.cache.get(interaction.guildId ?? '')
             const member: GuildMember | undefined = guild?.members.cache.get(<Snowflake>interaction.member?.user.id)
 
-            const song: Song | null = formatVideo(video, member?.voice.channel)
+            if (!member || !member.voice.channel) {
+                return interaction.reply('Cannot find channel')
+            }
+            const song: Song | null = formatVideo(video, member.voice.channel)
             if (!song) {
                 return interaction.reply('Video is either private or it does not exist')
             }

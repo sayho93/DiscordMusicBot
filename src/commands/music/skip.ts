@@ -1,7 +1,7 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
-import {Log} from '../../utils/logger'
+import {Log} from '#utils/logger'
 import {Message} from 'discord.js'
-import {DiscordBotClientObj} from '../../index'
+import {DiscordBotClientObj} from '#root/src'
 
 export default {
     data: new SlashCommandBuilder().setName('s').setDescription('Skip current playing music'),

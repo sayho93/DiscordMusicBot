@@ -1,18 +1,18 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
 import {MessageActionRow, MessageSelectMenu, VoiceChannel, StageChannel} from 'discord.js'
-import {formatMessageEmbed, formatVideo, onError} from '../../utils/utils'
-import {prefix, youtubeAPI} from '../../../config.json'
-import {Log} from '../../utils/logger'
+import {formatMessageEmbed, formatVideo, onError} from '#utils/utils'
+import Config from '#configs/config'
+import {Log} from '#utils/logger'
 import {Message} from 'discord.js'
-import {DiscordBotClientObj, Song} from '../../index'
+import {DiscordBotClientObj, Song} from '#root/src'
 // @ts-ignore
 import Youtube from 'simple-youtube-api'
 
 const Play = () => {
     const data = new SlashCommandBuilder().setName('p').setDescription('Plays music with uri')
-    const youtube = new Youtube(youtubeAPI)
+    const youtube = new Youtube(Config.youtubeAPI)
 
-    const playlistHandler = async (url: string, voiceChannel: VoiceChannel | StageChannel | null, client: DiscordBotClientObj, message: Message) => {
+    const playlistHandler = async (url: string, voiceChannel: VoiceChannel | StageChannel, client: DiscordBotClientObj, message: Message) => {
         try {
             const playlist = await youtube.getPlaylist(url)
             const videosObj = await playlist.getVideos()
@@ -99,7 +99,7 @@ const Play = () => {
     }
 
     const execute = async (message: Message, client: DiscordBotClientObj) => {
-        const args: string[] = message.content.slice(prefix.length).trim().split(/ +/g)
+        const args: string[] = message.content.slice(Config.prefix.length).trim().split(/ +/g)
         if (args.length < 2) {
             await message.reply(`parameter count doesn't match`)
             return

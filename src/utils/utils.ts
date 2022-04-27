@@ -1,6 +1,6 @@
 import {Message, MessageEmbed, StageChannel, VoiceChannel} from 'discord.js'
-import {Log} from './logger'
-import {Song} from '../index'
+import {Log} from '#utils/logger'
+import {Song} from '#root/src'
 
 export const formatDuration = (durationObj: any) => {
     return `${durationObj.hours ? durationObj.hours + ':' : ''}${durationObj.minutes ? durationObj.minutes : '00'}:${
@@ -8,7 +8,7 @@ export const formatDuration = (durationObj: any) => {
     }`
 }
 
-export const formatVideo = (video: any, voiceChannel: VoiceChannel | StageChannel | null | undefined): Song | null => {
+export const formatVideo = (video: any, voiceChannel: VoiceChannel | StageChannel): Song | null => {
     if (video.title === 'Deleted video') {
         return null
     }

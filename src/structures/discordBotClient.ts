@@ -1,9 +1,9 @@
 import {Client, ClientOptions, Collection, MessageEmbed} from 'discord.js'
 import {AudioPlayer, AudioPlayerStatus, AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, StreamType, VoiceConnection} from '@discordjs/voice'
-import {Log} from '../utils/logger'
+import {Log} from '#utils/logger'
 import ytdl from 'ytdl-core'
-import {formatVideo, onError} from '../utils/utils'
-import {DiscordBotClientObj, MusicType, Song} from '../index'
+import {formatVideo, onError} from '#utils/utils'
+import {DiscordBotClientObj, MusicType, Song} from '#root/src'
 
 const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
     let user = null
@@ -99,7 +99,7 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
             liveBuffer: 4000,
         }).on('error', (error: any) => {
             message.reply(error)
-            console.log(error)
+            Log.error(error)
         })
 
         const resource: AudioResource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
@@ -118,6 +118,7 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
         } catch (err) {
             Log.error(err)
             message.channel.send('Error occurred on player.play()')
+            message.channel.send(err)
         }
     }
 

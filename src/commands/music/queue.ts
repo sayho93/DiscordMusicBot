@@ -1,6 +1,6 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
 import {Message, MessageEmbed} from 'discord.js'
-import {DiscordBotClientObj} from '../../index'
+import {DiscordBotClientObj} from '#root/src'
 
 export default {
     data: new SlashCommandBuilder().setName('q').setDescription('Stop current playing music'),
