@@ -12,43 +12,53 @@ const discordBotClient = DiscordBotClient({
 })
 const path: string = process.env.NODE_ENV === 'production' ? 'dist/src' : 'src'
 
-const startTime = performance.now()
 const init = async () => {
-    let commandDirs
-    let events
-    const jobs = []
+    let commandDirs: string[]
+    let events: string[]
 
-    await Promise.all([(commandDirs = await fs.readdir(`${path}/commands`)), (events = await fs.readdir(`${path}/events`))])
+    await Promise.allSettled([(commandDirs = await fs.readdir(`${path}/commands`)), (events = await fs.readdir(`${path}/events`))])
 
-    const readCommandDirs = commandDirs.map(async (dir: string) => {
-        let commands: string[] = await fs.readdir(`${path}/commands/${dir}`)
+    const concurrentJobs: Function[] = []
+    let commands: string[] = []
 
-        const readCommands = commands
-            .filter(files => !files.endsWith('.map'))
-            .map(async item => {
-                let command = await import(`./commands/${dir}/${item}`)
-                command = command.default
-                Log.debug(`[commands] Loading ${item}`)
-                discordBotClient.commands.set(command.data.name.toLowerCase(), command)
+    commandDirs.forEach(dir => {
+        concurrentJobs.push(() => {
+            fs.readdir(`${path}/commands/${dir}`).then(files => {
+                files.forEach(file => {
+                    commands.push(`./commands/${dir}/${file}`)
+                })
+                Log.verbose(`${dir} commands loaded`)
             })
-        jobs.push(...readCommands)
+        })
     })
 
-    const readEvents = events
+    events
         .filter(file => !file.endsWith('.map'))
-        .map(async file => {
-            let event = await import(`./events/${file}`)
-            event = event.default
-            Log.debug(`[events] Loading ${event.name}`)
-            if (event.once) discordBotClient.client.once(event.name, (...args: any) => event.execute(...args, discordBotClient))
-            else discordBotClient.client.on(event.name, (...args: any) => event.execute(...args, discordBotClient))
+        .forEach(file => {
+            concurrentJobs.push(async () => {
+                let event = await import(`./events/${file}`)
+                event = event.default
+                Log.debug(`[events] Loading ${event.name}`)
+                if (event.once) discordBotClient.client.once(event.name, (...args: any) => event.execute(...args, discordBotClient))
+                else discordBotClient.client.on(event.name, (...args: any) => event.execute(...args, discordBotClient))
+            })
         })
 
-    jobs.push(...readEvents)
-    await Promise.all(readCommandDirs)
-    await Promise.all(jobs)
+    await Promise.allSettled(concurrentJobs.map(job => job()))
+
+    await Promise.allSettled(
+        commands
+            .filter(file => !file.endsWith('.map'))
+            .map(async (file: string) => {
+                let command = await import(file)
+                command = command.default
+                Log.debug(`[commands] Loading ${file}`)
+                discordBotClient.commands.set(command.data.name.toLowerCase(), command)
+            })
+    )
 }
 
+const startTime = performance.now()
 init().then(() => {
     Log.debug(`Task took ${Math.round(performance.now() - startTime)} milliseconds`)
     discordBotClient.client.login(Config.token).then()
