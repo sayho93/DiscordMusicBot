@@ -15,20 +15,18 @@ const path: string = process.env.NODE_ENV === 'production' ? 'dist/src' : 'src'
 const init = async () => {
     let commandDirs: string[]
     let events: string[]
-
     await Promise.allSettled([(commandDirs = await fs.readdir(`${path}/commands`)), (events = await fs.readdir(`${path}/events`))])
 
     const concurrentJobs: Function[] = []
     let commands: string[] = []
 
     commandDirs.forEach(dir => {
-        concurrentJobs.push(() => {
-            fs.readdir(`${path}/commands/${dir}`).then(files => {
-                files.forEach(file => {
-                    commands.push(`./commands/${dir}/${file}`)
-                })
-                Log.verbose(`${dir} commands loaded`)
+        concurrentJobs.push(async () => {
+            const files = await fs.readdir(`${path}/commands/${dir}`)
+            files.forEach(file => {
+                commands.push(`./commands/${dir}/${file}`)
             })
+            Log.verbose(`${dir} commands loaded`)
         })
     })
 
@@ -36,11 +34,16 @@ const init = async () => {
         .filter(file => !file.endsWith('.map'))
         .forEach(file => {
             concurrentJobs.push(async () => {
-                let event = await import(`./events/${file}`)
-                event = event.default
-                Log.debug(`[events] Loading ${event.name}`)
-                if (event.once) discordBotClient.client.once(event.name, (...args: any) => event.execute(...args, discordBotClient))
-                else discordBotClient.client.on(event.name, (...args: any) => event.execute(...args, discordBotClient))
+                try {
+                    let event = await import(`./events/${file}`)
+                    event = event.default
+                    Log.debug(`[events] Loading ${event.name}`)
+                    if (event.once) discordBotClient.client.once(event.name, (...args: any) => event.execute(...args, discordBotClient))
+                    else discordBotClient.client.on(event.name, (...args: any) => event.execute(...args, discordBotClient))
+                } catch (error) {
+                    Log.error(`[events] Failed to load ${file}`)
+                    Log.error(error)
+                }
             })
         })
 
@@ -50,10 +53,15 @@ const init = async () => {
         commands
             .filter(file => !file.endsWith('.map'))
             .map(async (file: string) => {
-                let command = await import(file)
-                command = command.default
-                Log.debug(`[commands] Loading ${file}`)
-                discordBotClient.commands.set(command.data.name.toLowerCase(), command)
+                try {
+                    let command = await import(file)
+                    command = command.default
+                    Log.debug(`[commands] Loading ${file}`)
+                    discordBotClient.commands.set(command.data.name.toLowerCase(), command)
+                } catch (error) {
+                    Log.error(`[commands] Failed to load ${file}`)
+                    Log.error(error)
+                }
             })
     )
 }
