@@ -90,7 +90,7 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClient => {
         let validate = ytdl.validateURL(musicData.queue[0].url)
         if (!validate) {
             Log.error('Please input a **valid** URL.')
-            message.reply('Please input a **valid** URL.')
+            await message.reply('Please input a **valid** URL.')
         }
         const stream = ytdl(musicData.queue[0].videoId, {
             filter: 'audioonly',
@@ -124,9 +124,13 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClient => {
 
     return {
         commands,
-        connection,
+        setConnection: (conn: VoiceConnection | null) => {
+            connection = conn
+        },
         getConnection: () => connection,
-        musicData,
+        setMusicData: (data: MusicData) => {
+            musicData = data
+        },
         getMusicData: () => musicData,
         playSong,
         client,

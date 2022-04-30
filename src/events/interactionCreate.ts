@@ -33,7 +33,10 @@ const selectMenuHandler = async (interaction: SelectMenuInteraction, discordBotC
         await interaction.reply({embeds: [formatMessageEmbed(interaction.values[0], 1, queue.length, song.title, song.thumbnail)]})
 
         if (!musicData.isPlaying) {
-            discordBotClient.musicData.isPlaying = true
+            discordBotClient.setMusicData({
+                ...musicData,
+                isPlaying: true,
+            })
             await discordBotClient.playSong(interaction)
         }
     } catch (err) {
@@ -56,7 +59,6 @@ const commandHandler = async (interaction: CommandInteraction, discordBotClient:
 export default {
     name: 'interactionCreate',
     execute: async (interaction: Interaction, client: DiscordBotClient) => {
-        console.log(interaction.type)
         if (interaction.isSelectMenu()) await selectMenuHandler(interaction, client)
         else if (interaction.isCommand()) await commandHandler(interaction, client)
     },

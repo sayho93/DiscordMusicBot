@@ -13,15 +13,15 @@ export default {
             setTimeout(() => {
                 if (!((oldState.channel?.members.size ?? 1) - 1)) {
                     const channel: any = oldState.client.channels.cache.filter((channel: any) => channel.name === '일반').first()
-                    client.musicData = {
+                    client.setMusicData({
                         queue: [],
                         isPlaying: false,
                         volume: 1,
                         player: null,
-                    }
+                    })
                     channel.send('바윙~')
                     client.getConnection()?.destroy()
-                    client.connection = null
+                    client.setConnection(null)
                 }
             }, 5000)
             // 180000
