@@ -1,15 +1,15 @@
 import {Log} from '#utils/logger'
-import {CommandInteraction, Guild, GuildMember, Interaction, Message, SelectMenuInteraction, Snowflake} from 'discord.js'
+import {CommandInteraction, Guild, GuildMember, Interaction, SelectMenuInteraction, Snowflake} from 'discord.js'
 
 // @ts-ignore
 import Youtube from 'simple-youtube-api/src/index.js'
 // const Youtube = require('simple-youtube-api')
 import Config from '#configs/config'
-import {formatMessageEmbed, formatVideo, onError} from '#utils/utils'
-import {DiscordBotClientObj, Song} from '../index'
+import {formatMessageEmbed, formatVideo} from '#utils/utils'
+import {DiscordBotClient, Song} from '../index'
 const youtube = new Youtube(Config.youtubeAPI)
 
-const selectMenuHandler = async (interaction: SelectMenuInteraction, discordBotClient: DiscordBotClientObj) => {
+const selectMenuHandler = async (interaction: SelectMenuInteraction, discordBotClient: DiscordBotClient) => {
     try {
         const video = await youtube.getVideo(interaction.values[0])
         const guild: Guild | undefined = discordBotClient.client.guilds.cache.get(interaction.guildId ?? '')
@@ -41,7 +41,7 @@ const selectMenuHandler = async (interaction: SelectMenuInteraction, discordBotC
     }
 }
 
-const commandHandler = async (interaction: CommandInteraction, discordBotClient: DiscordBotClientObj) => {
+const commandHandler = async (interaction: CommandInteraction, discordBotClient: DiscordBotClient) => {
     const command = discordBotClient.commands.get(interaction.commandName)
     if (!command) return
     Log.info(`request:: command: ${interaction.commandName}, user: ${interaction.user.tag}`)
@@ -55,7 +55,7 @@ const commandHandler = async (interaction: CommandInteraction, discordBotClient:
 
 export default {
     name: 'interactionCreate',
-    execute: async (interaction: Interaction, client: DiscordBotClientObj) => {
+    execute: async (interaction: Interaction, client: DiscordBotClient) => {
         console.log(interaction.type)
         if (interaction.isSelectMenu()) await selectMenuHandler(interaction, client)
         else if (interaction.isCommand()) await commandHandler(interaction, client)

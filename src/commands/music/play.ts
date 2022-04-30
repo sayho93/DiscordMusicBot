@@ -4,7 +4,7 @@ import {formatMessageEmbed, formatVideo, onError} from '#utils/utils'
 import Config from '#configs/config'
 import {Log} from '#utils/logger'
 import {Message} from 'discord.js'
-import {DiscordBotClientObj, Song} from '#root/src'
+import {DiscordBotClient, Song} from '#root/src'
 // @ts-ignore
 import Youtube from 'simple-youtube-api'
 
@@ -12,7 +12,7 @@ const Play = () => {
     const data = new SlashCommandBuilder().setName('p').setDescription('Plays music with uri')
     const youtube = new Youtube(Config.youtubeAPI)
 
-    const playlistHandler = async (url: string, voiceChannel: VoiceChannel | StageChannel, client: DiscordBotClientObj, message: Message) => {
+    const playlistHandler = async (url: string, voiceChannel: VoiceChannel | StageChannel, client: DiscordBotClient, message: Message) => {
         Log.info('Playlist detected')
         try {
             const playlist = await youtube.getPlaylist(url)
@@ -46,7 +46,7 @@ const Play = () => {
         }
     }
 
-    const singleVidHandler = async (url: string, voiceChannel: VoiceChannel | StageChannel, client: DiscordBotClientObj, message: Message) => {
+    const singleVidHandler = async (url: string, voiceChannel: VoiceChannel | StageChannel, client: DiscordBotClient, message: Message) => {
         Log.info('Single video/song detected')
         try {
             const video = await youtube.getVideo(url)
@@ -101,7 +101,7 @@ const Play = () => {
         }
     }
 
-    const execute = async (message: Message, client: DiscordBotClientObj) => {
+    const execute = async (message: Message, client: DiscordBotClient) => {
         const args: string[] = message.content.slice(Config.prefix.length).trim().split(/ +/g)
         if (args.length < 2) {
             await message.reply(`parameter count doesn't match`)

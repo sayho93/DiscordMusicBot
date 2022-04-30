@@ -11,19 +11,19 @@ declare type Song = {
     videoId: string
 }
 
-declare type MusicType = {
+declare type MusicData = {
     queue: Song[]
     isPlaying: Boolean
     volume: number
     player: AudioPlayer | null
 }
 
-declare type DiscordBotClientObj = {
+declare type DiscordBotClient = {
     user: any
     commands: Collection<string, any>
     connection: VoiceConnection | null
     getConnection: Function
-    musicData: MusicType
+    musicData: MusicData
     getMusicData: Function
     playSong: Function
     client: Client

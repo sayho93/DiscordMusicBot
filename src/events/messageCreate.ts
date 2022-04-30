@@ -1,12 +1,12 @@
 import {Message} from 'discord.js'
 import {Log} from '#utils/logger'
 import Config from '#configs/config'
-import {DiscordBotClientObj} from '#root/src'
+import {DiscordBotClient} from '#root/src'
 import {onError} from '#utils/utils'
 
 export default {
     name: 'messageCreate',
-    execute: async (message: Message, client: DiscordBotClientObj) => {
+    execute: async (message: Message, client: DiscordBotClient) => {
         Log.info(`message received ${message.content}`)
         if (message.author.bot) return
 

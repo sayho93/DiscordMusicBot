@@ -1,4 +1,8 @@
 {
+  "ts-node": {
+    "transpileOnly": true,
+    "files": true
+  },
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
@@ -8,44 +12,28 @@
       "#configs/*": ["src/configs/*"],
       "#events/*": ["src/events/*"],
       "#structures/*": ["src/structures/*"],
-      "#utils/*": ["src/utils/*"],
+      "#utils/*": ["src/utils/*"]
     },
-    "strict": true,
-    "module": "ES2020",
     "target": "es2020",
+    "lib": [
+      "es2020"
+    ],
+    "module": "ES2020",
     "moduleResolution": "Node",
+    "strict": true,
     "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,        // import * as ~~~ 을 함수로 사용할 수 있게 해준다
+//    "declaration": true,
 //    "skipLibCheck": true,           // *.d.ts파일의 타의 검사를 건너뛴
 //    "experimentalDecorators": true, // 타입스크립트 데코레이터를 사용하기 위해 필요한 옵션
 //    "emitDecoratorMetadata": true,   // 위와 같음
 //    "allowJs": true,
 //    "resolveJsonModule": true,
-    "outDir": "dist/src",
+    "outDir": "dist/src"
   },
-  "ts-node": {
-    "compilerOptions": {
-      "baseUrl": ".",
-      "paths": {
-        "#root/*": ["*"],
-        "#src/*": ["src/*"],
-        "#commands/*": ["src/commands/*"],
-        "#configs/*": ["src/configs/*"],
-        "#events/*": ["src/events/*"],
-        "#structures/*": ["src/structures/*"],
-        "#utils/*": ["src/utils/*"],
-      },
-      "strict": true,
-      "module": "ES2020",
-      "target": "es2020",
-      "moduleResolution": "Node",
-      "sourceMap": true,
-      "esModuleInterop": true
-    }
-  },
-
   "include": [
-    "./src/**/*",
+    "./src/**/*"
   ],
   "exclude": [
     "node_modules"
