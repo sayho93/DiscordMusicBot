@@ -4,7 +4,7 @@ import {DiscordBotClient} from '#root/src'
 import * as Path from 'path'
 
 const InitApp = async (discordBotClient: DiscordBotClient) => {
-    const path: string = process.env.NODE_ENV === 'production' ? 'dist/src' : 'src'
+    const path: string = process.env.NODE_ENV === 'production' ? 'src' : 'src'
     let commandDirs: string[]
     let events: string[]
     await Promise.allSettled([(commandDirs = await fs.readdir(`${path}/commands`)), (events = await fs.readdir(`${path}/events`))])
