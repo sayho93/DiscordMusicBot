@@ -8,7 +8,7 @@
   "scripts": {
     "start": "npm i && NODE_NO_WARNINGS=1 node src/app.js",
     "build": "tsc -p . && cp .env ./dist/.env ",
-    "start:build": "tsc && node dist/src/app.js",
+    "start:build": "tsc -p . && cp .env ./dist/./env && node dist/src/app.js",
     "start:dev": "npm run build && cd ~/WebstormProjects/DiscordMusicBot && npm i && node src/app.js",
     "run:dev": "nodemon --watch 'src/**/*.ts' --exec node --loader ts-node/esm src/app.ts"
   },
@@ -46,6 +46,6 @@
     "prettier": "^2.7.1",
     "ts-node": "^10.8.1",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^4.7.3"
+    "typescript": "^4.7.4"
   }
 }
