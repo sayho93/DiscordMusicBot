@@ -1,11 +1,11 @@
-import {Log} from '../utils/logger'
-import {DiscordBotClientObj} from '../index'
+import {Log} from '#utils/logger'
+import {DiscordBotClient} from '#root/src'
 
 export default {
     name: 'ready',
     once: true,
-    execute: (discordBotClient: DiscordBotClientObj) => {
-        Log.verbose(`SayhoBot server ready`)
+    execute: (discordBotClient: DiscordBotClient) => {
         Log.verbose(`Logged in as ${discordBotClient.user?.tag}`)
+        Log.verbose(`SayhoBot server ready`)
     },
 }

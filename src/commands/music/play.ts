@@ -1,18 +1,20 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
 import {MessageActionRow, MessageSelectMenu, VoiceChannel, StageChannel} from 'discord.js'
-import {formatMessageEmbed, formatVideo, onError} from '../../utils/utils'
-import {prefix, youtubeAPI} from '../../../config.json'
-import {Log} from '../../utils/logger'
+import {formatMessageEmbed, formatVideo, onError} from '#utils/utils'
+import Config from '#configs/config'
+import {Log} from '#utils/logger'
 import {Message} from 'discord.js'
-import {DiscordBotClientObj, Song} from '../../index'
+import {DiscordBotClient, MusicData, Song} from '#root/src'
 // @ts-ignore
 import Youtube from 'simple-youtube-api'
 
 const Play = () => {
     const data = new SlashCommandBuilder().setName('p').setDescription('Plays music with uri')
-    const youtube = new Youtube(youtubeAPI)
+    const youtube = new Youtube(Config.youtubeAPI)
 
-    const playlistHandler = async (url: string, voiceChannel: VoiceChannel | StageChannel | null, client: DiscordBotClientObj, message: Message) => {
+    const playlistHandler = async (url: string, voiceChannel: VoiceChannel | StageChannel, client: DiscordBotClient, message: Message) => {
+        Log.info('Playlist detected')
+        const musicData = client.getMusicData()
         try {
             const playlist = await youtube.getPlaylist(url)
             const videosObj = await playlist.getVideos()
@@ -26,17 +28,17 @@ const Play = () => {
 
                 if (idx === 0) thumb = item.thumbnails.high.url
                 const song: Song | null = formatVideo(item, voiceChannel)
-                if (song) client.musicData.queue.push(song)
+                if (song) musicData.queue.push(song)
             }
 
-            const queue = client.musicData.queue
+            const queue = musicData.queue
             Log.info(`queue length: ${queue.length}`)
             Log.info(`next: ${JSON.stringify(queue[0].title)}`)
 
             await message.reply({embeds: [formatMessageEmbed(url, videosObj.length, queue.length, playlist.title, thumb)]})
 
-            if (!client.musicData.isPlaying) {
-                client.musicData.isPlaying = true
+            if (!musicData.isPlaying) {
+                musicData.isPlaying = true
                 return client.playSong(message)
             }
         } catch (err) {
@@ -45,21 +47,23 @@ const Play = () => {
         }
     }
 
-    const singleVidHandler = async (url: string, voiceChannel: VoiceChannel | StageChannel, client: DiscordBotClientObj, message: Message) => {
+    const singleVidHandler = async (url: string, voiceChannel: VoiceChannel | StageChannel, client: DiscordBotClient, message: Message) => {
+        Log.info('Single video/song detected')
+        const musicData = client.getMusicData()
         try {
             const video = await youtube.getVideo(url)
             const song: Song | null = formatVideo(video, voiceChannel)
             if (!song) return message.reply('Video is either private or it does not exist')
-            client.musicData.queue.push(song)
+            musicData.queue.push(song)
 
-            const queue = client.musicData.queue
+            const queue = musicData.queue
             Log.info(`Queue length: ${queue.length}`)
             Log.info(`Current: ${JSON.stringify(queue[0].title)}`)
 
             await message.reply({embeds: [formatMessageEmbed(url, 1, queue.length, song.title, song.thumbnail)]})
 
-            if (!client.musicData.isPlaying) {
-                client.musicData.isPlaying = true
+            if (!musicData.isPlaying) {
+                musicData.isPlaying = true
                 return client.playSong(message)
             }
         } catch (err) {
@@ -68,6 +72,7 @@ const Play = () => {
     }
 
     const searchHandler = async (args: string[], message: Message) => {
+        Log.info('Search detected')
         try {
             let searchTxt = ''
             args.forEach((item, idx) => {
@@ -98,8 +103,10 @@ const Play = () => {
         }
     }
 
-    const execute = async (message: Message, client: DiscordBotClientObj) => {
-        const args: string[] = message.content.slice(prefix.length).trim().split(/ +/g)
+    const execute = async (message: Message, client: DiscordBotClient) => {
+        const musicData: MusicData = client.getMusicData()
+
+        const args: string[] = message.content.slice(Config.prefix.length).trim().split(/ +/g)
         if (args.length < 2) {
             await message.reply(`parameter count doesn't match`)
             return
@@ -117,7 +124,7 @@ const Play = () => {
             return message.channel.send('I need the permissions to join and speak in your voice channel')
         }
 
-        if (!client.musicData.isPlaying && client.musicData.queue.length === 1) client.musicData.queue.shift()
+        if (!musicData.isPlaying && musicData.queue.length === 1) musicData.queue.shift()
 
         const query: string = args[1]
         const playlistCheck =
@@ -132,7 +139,7 @@ const Play = () => {
             else if (vidSongCheck) await singleVidHandler(query, voiceChannel, client, message)
             else await searchHandler(args, message)
         } catch (err) {
-            client.musicData.isPlaying = false
+            musicData.isPlaying = false
             onError(err, message)
         }
     }

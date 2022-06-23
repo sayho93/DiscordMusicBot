@@ -1,4 +1,3 @@
-import {Song} from './utils/utils'
 import {AudioPlayer, VoiceConnection} from '@discordjs/voice'
 import {Client, Collection, StageChannel, VoiceChannel} from 'discord.js'
 
@@ -7,25 +6,25 @@ declare type Song = {
     title: string
     duration: string | null
     thumbnail: string
-    voiceChannel: VoiceChannel | StageChannel | null | undefined
+    voiceChannel: VoiceChannel | StageChannel
     video: any
     videoId: string
 }
 
-declare type MusicType = {
+declare type MusicData = {
     queue: Song[]
     isPlaying: Boolean
     volume: number
     player: AudioPlayer | null
 }
 
-declare type DiscordBotClientObj = {
+declare type DiscordBotClient = {
     user: any
     commands: Collection<string, any>
-    connection: VoiceConnection | null
-    getConnection: Function
-    musicData: MusicType
-    getMusicData: Function
-    playSong: Function
+    setConnection: (connection: VoiceConnection | null) => void
+    getConnection: () => VoiceConnection | null
+    setMusicData: (data: MusicData) => void
+    getMusicData: () => MusicData
+    playSong: (message: any) => void
     client: Client
 }

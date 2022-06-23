@@ -1,39 +1,51 @@
 {
   "name": "tstutorials",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "",
-  "main": "src/index.js",
+  "type": "module",
+  "main": "src/app.ts",
   "scripts": {
-    "start:dev:nonRespawn": "ts-node-dev --transpile-only src/app.ts",
-    "start:dev": "ts-node-dev --respawn --transpile-only --debug src/app.ts",
-    "start:build": "node dist/src/App.js",
-    "start": "ts-node src/app.ts",
-    "build": "tsc",
-    "deploy": "node src/deploy.js"
+    "start": "npm i && NODE_NO_WARNINGS=1 node src/app.js",
+    "build": "tsc -p . && cp .env ./dist/.env ",
+    "start:build": "tsc -p . && cp .env ./dist/./env && node dist/src/app.js",
+    "start:dev": "npm run build && cd ~/WebstormProjects/DiscordMusicBot && npm i && node src/app.js",
+    "run:dev": "nodemon --watch 'src/**/*.ts' --exec node --loader ts-node/esm src/app.ts"
+  },
+  "imports": {
+    "#root/*": "./src/*.js",
+    "#src/*": "./src/*.js",
+    "#commands/*": "./src/commands/*.js",
+    "#configs/*": "./src/configs/*.js",
+    "#events/*": "./src/events/*.js",
+    "#structures/*": "./src/structures/*.js",
+    "#utils/*": "./src/utils/*.js"
   },
   "dependencies": {
-    "@discordjs/builders": "^0.13.0",
-    "@discordjs/rest": "^0.4.1",
-    "@discordjs/voice": "^0.9.0",
-    "axios": "^0.27.1",
-    "discord-api-types": "^0.32.0",
-    "discord.js": "^13.6.0",
+    "@discordjs/builders": "^0.15.0",
+    "@discordjs/rest": "^0.5.0",
+    "@discordjs/voice": "^0.10.0",
+    "axios": "^0.27.2",
+    "discord-api-types": "^0.34.0",
+    "discord.js": "^13.8.1",
+    "dotenv": "^16.0.1",
     "ffmpeg-static": "^5.0.0",
     "https-proxy-agent": "^5.0.0",
     "libsodium-wrappers": "^0.7.10",
     "miniget": "^4.2.2",
     "simple-youtube-api": "^5.2.1",
-    "winston": "^3.7.2",
-    "winston-daily-rotate-file": "^4.6.1",
-    "youtube-dl-exec": "^2.0.10",
+    "winston": "^3.8.0",
+    "winston-daily-rotate-file": "^4.7.1",
+    "youtube-dl-exec": "^2.0.12",
     "ytdl-core": "^4.11.0"
   },
   "devDependencies": {
-    "@types/node": "^17.0.28",
-    "prettier": "^2.6.2",
-    "ts-node": "^10.7.0",
-    "ts-node-dev": "^1.1.8",
-    "typescript": "^4.6.3"
+    "@types/node": "^18.0.0",
+    "esm": "^3.2.25",
+    "nodemon": "^2.0.18",
+    "prettier": "^2.7.1",
+    "ts-node": "^10.8.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.7.4"
   }
 }

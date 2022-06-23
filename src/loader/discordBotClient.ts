@@ -1,15 +1,25 @@
-import {Client, ClientOptions, Collection, MessageEmbed} from 'discord.js'
-import {AudioPlayer, AudioPlayerStatus, AudioResource, createAudioPlayer, createAudioResource, joinVoiceChannel, StreamType, VoiceConnection} from '@discordjs/voice'
-import {Log} from '../utils/logger'
+import {Client, ClientOptions, Collection, Message, MessageEmbed} from 'discord.js'
+import {
+    AudioPlayer,
+    AudioPlayerStatus,
+    AudioResource,
+    createAudioPlayer,
+    createAudioResource,
+    DiscordGatewayAdapterCreator,
+    joinVoiceChannel,
+    StreamType,
+    VoiceConnection,
+} from '@discordjs/voice'
+import {Log} from '#utils/logger'
 import ytdl from 'ytdl-core'
-import {formatVideo, onError} from '../utils/utils'
-import {DiscordBotClientObj, MusicType, Song} from '../index'
+import {formatVideo, onError} from '#utils/utils'
+import {DiscordBotClient, MusicData, Song} from '#root/src'
 
-const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
+const DiscordBotClient = (props: ClientOptions): DiscordBotClient => {
     let user = null
     const client: Client = new Client(props)
     const commands: Collection<string, any> = new Collection()
-    let musicData: MusicType = {
+    let musicData: MusicData = {
         queue: [],
         isPlaying: false,
         volume: 1,
@@ -17,7 +27,7 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
     }
     let connection: VoiceConnection | null = null
 
-    const createPlayer = async (message: any) => {
+    const createPlayer = async (message: Message) => {
         const player: AudioPlayer = createAudioPlayer()
 
         player
@@ -38,7 +48,7 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
                 if (musicData.queue.length > 1) {
                     Log.debug('queue length is not zero')
                     musicData.queue.shift()
-                    await playSong(message.channel)
+                    await playSong(message)
                     return
                 }
 
@@ -62,7 +72,7 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
                 Log.error('error occurred')
                 musicData.isPlaying = false
                 if (err.message === 'Status code: 410') {
-                    message.channel.send(`Unplayable Song: ${message.client.musicData.queue[0].title}`)
+                    message.channel.send(`Unplayable Song: ${musicData.queue[0].title}`)
                     return
                 }
                 message.channel.send('error occurred')
@@ -73,7 +83,7 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
         return player
     }
 
-    const playSong = async (message: any) => {
+    const playSong = async (message: Message) => {
         if (!musicData.queue.length) {
             message.channel.send('No songs in queue')
             return
@@ -90,7 +100,7 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
         let validate = ytdl.validateURL(musicData.queue[0].url)
         if (!validate) {
             Log.error('Please input a **valid** URL.')
-            message.reply('Please input a **valid** URL.')
+            await message.reply('Please input a **valid** URL.')
         }
         const stream = ytdl(musicData.queue[0].videoId, {
             filter: 'audioonly',
@@ -99,15 +109,19 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
             liveBuffer: 4000,
         }).on('error', (error: any) => {
             message.reply(error)
-            console.log(error)
+            Log.error(error)
         })
 
         const resource: AudioResource = createAudioResource(stream, {inputType: StreamType.Arbitrary})
         if (!connection) {
+            if (!message.guild) {
+                message.channel.send(`Error occurred on joining voice channel\nguild is not defined`)
+                return
+            }
             connection = joinVoiceChannel({
                 channelId: musicData.queue[0].voiceChannel.id,
                 guildId: message.guild.id,
-                adapterCreator: message.guild.voiceAdapterCreator,
+                adapterCreator: message.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
             })
         }
         if (!musicData.player) musicData.player = await createPlayer(message)
@@ -115,17 +129,18 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClientObj => {
         try {
             musicData.player.play(resource)
             connection.subscribe(musicData.player)
-        } catch (err) {
+        } catch (err: any) {
             Log.error(err)
             message.channel.send('Error occurred on player.play()')
+            message.channel.send(err)
         }
     }
 
     return {
         commands,
-        connection,
+        setConnection: (conn: VoiceConnection | null) => (connection = conn),
         getConnection: () => connection,
-        musicData,
+        setMusicData: (data: MusicData) => (musicData = data),
         getMusicData: () => musicData,
         playSong,
         client,
