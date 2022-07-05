@@ -1,6 +1,7 @@
-import {Message, MessageEmbed, StageChannel, VoiceChannel} from 'discord.js'
-import {Log} from '#utils/logger'
+import {MessageEmbed, StageChannel, VoiceChannel, WebhookClient} from 'discord.js'
 import {Song} from '#root/src'
+import {HttpUtil} from '#utils/http'
+import Config from '#configs/config'
 
 export const formatDuration = (durationObj: any) => {
     return `${durationObj.hours ? durationObj.hours + ':' : ''}${durationObj.minutes ? durationObj.minutes : '00'}:${
@@ -36,13 +37,33 @@ export const formatMessageEmbed = (url: string, queuedCount: number, queueLength
         .setThumbnail(thumbnail)
 }
 
-export const onError = (err: unknown, message: Message) => {
-    if (err instanceof Error) {
-        Log.error(err.stack)
-        const embed = new MessageEmbed()
-            .setColor('RED')
-            .setTitle('An error has occurred')
-            .setDescription(<string>err.stack)
-        message.reply({embeds: [embed]}).then()
-    }
+// export const onError = (err: unknown, message: Message) => {
+//     if (err instanceof Error) {
+//         Log.error(err.stack)
+//         const embed = new MessageEmbed()
+//             .setColor('RED')
+//             .setTitle('An error has occurred')
+//             .setDescription(<string>err.stack)
+//         message.reply({embeds: [embed]}).then()
+//     }
+// }
+
+export const getWebhookCredentials = async () => {
+    if (!Config.webhookUrl) throw new Error('webhook url is required')
+    const webhookInfo = await HttpUtil.getData(Config.webhookUrl)
+    Config.webhookId = webhookInfo.id
+    Config.webhookToken = webhookInfo.token
+}
+
+export const dispatchErrorLog = async (error: any, title?: string) => {
+    if (!Config.webhookId || !Config.webhookToken) throw new Error('webhook credentials are missing')
+
+    const webhookClient = new WebhookClient({id: Config.webhookId, token: Config.webhookToken})
+    const embed = new MessageEmbed()
+        .setTitle(title ? title : 'Error Report')
+        .setColor('RED')
+        .setDescription(<string>error.stack)
+        // .addField('Stack', error.stack)
+        .addField('Message', error.message)
+    await webhookClient.send({embeds: [embed]})
 }

@@ -1,6 +1,6 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
 import {Message} from 'discord.js'
-import {onError} from '#utils/utils'
+import {dispatchErrorLog} from '#utils/utils'
 import {DiscordBotClient} from '#root/src'
 
 export default {
@@ -17,7 +17,7 @@ export default {
             client.getConnection()?.destroy()
             client.setConnection(null)
         } catch (err) {
-            onError(err, message)
+            await dispatchErrorLog(err)
         }
     },
 }

@@ -12,7 +12,7 @@ import {
 } from '@discordjs/voice'
 import {Log} from '#utils/logger'
 import ytdl from 'ytdl-core'
-import {formatVideo, onError} from '#utils/utils'
+import {dispatchErrorLog, formatVideo} from '#utils/utils'
 import {DiscordBotClient, MusicData, Song} from '#root/src'
 
 const DiscordBotClient = (props: ClientOptions): DiscordBotClient => {
@@ -76,9 +76,9 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClient => {
                     return
                 }
                 message.channel.send('error occurred')
-                onError(err, message)
                 connection?.destroy()
                 connection = null
+                dispatchErrorLog(err)
             })
         return player
     }
@@ -130,6 +130,7 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClient => {
             musicData.player.play(resource)
             connection.subscribe(musicData.player)
         } catch (err: any) {
+            await dispatchErrorLog(err)
             Log.error(err)
             message.channel.send('Error occurred on player.play()')
             message.channel.send(err)

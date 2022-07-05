@@ -1,6 +1,6 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
 import {MessageActionRow, MessageSelectMenu, VoiceChannel, StageChannel} from 'discord.js'
-import {formatMessageEmbed, formatVideo, onError} from '#utils/utils'
+import {dispatchErrorLog, formatMessageEmbed, formatVideo} from '#utils/utils'
 import Config from '#configs/config'
 import {Log} from '#utils/logger'
 import {Message} from 'discord.js'
@@ -42,7 +42,7 @@ const Play = () => {
                 return client.playSong(message)
             }
         } catch (err) {
-            onError(err, message)
+            await dispatchErrorLog(err)
             return message.reply('Playlist is either private or it does not exist')
         }
     }
@@ -67,7 +67,7 @@ const Play = () => {
                 return client.playSong(message)
             }
         } catch (err) {
-            onError(err, message)
+            await dispatchErrorLog(err)
         }
     }
 
@@ -99,7 +99,7 @@ const Play = () => {
             const row = new MessageActionRow().addComponents(component)
             await message.reply({content: `'${searchTxt}' 검색 결과`, components: [row]})
         } catch (err) {
-            onError(err, message)
+            await dispatchErrorLog(err)
         }
     }
 
@@ -140,7 +140,7 @@ const Play = () => {
             else await searchHandler(args, message)
         } catch (err) {
             musicData.isPlaying = false
-            onError(err, message)
+            await dispatchErrorLog(err)
         }
     }
 

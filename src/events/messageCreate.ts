@@ -2,7 +2,7 @@ import {Message} from 'discord.js'
 import {Log} from '#utils/logger'
 import Config from '#configs/config'
 import {DiscordBotClient} from '#root/src'
-import {onError} from '#utils/utils'
+import {dispatchErrorLog} from '#utils/utils'
 
 export default {
     name: 'messageCreate',
@@ -28,7 +28,7 @@ export default {
         try {
             await command.execute(message, client)
         } catch (err) {
-            onError(err, message)
+            await dispatchErrorLog(err)
             await message.reply({content: 'There was an error while executing this command'})
         }
     },

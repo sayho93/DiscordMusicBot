@@ -5,7 +5,7 @@ import {CommandInteraction, Guild, GuildMember, Interaction, SelectMenuInteracti
 import Youtube from 'simple-youtube-api/src/index.js'
 // const Youtube = require('simple-youtube-api')
 import Config from '#configs/config'
-import {formatMessageEmbed, formatVideo} from '#utils/utils'
+import {dispatchErrorLog, formatMessageEmbed, formatVideo} from '#utils/utils'
 import {DiscordBotClient, Song} from '../index'
 const youtube = new Youtube(Config.youtubeAPI)
 
@@ -40,6 +40,7 @@ const selectMenuHandler = async (interaction: SelectMenuInteraction, discordBotC
             await discordBotClient.playSong(interaction)
         }
     } catch (err) {
+        await dispatchErrorLog(err)
         if (err instanceof Error) Log.error(err.stack)
     }
 }
