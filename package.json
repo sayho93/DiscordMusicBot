@@ -36,13 +36,13 @@
     "simple-youtube-api": "^5.2.1",
     "winston": "^3.8.1",
     "winston-daily-rotate-file": "^4.7.1",
-    "youtube-dl-exec": "^2.0.12",
+    "youtube-dl-exec": "^2.1.0",
     "ytdl-core": "^4.11.0"
   },
   "devDependencies": {
-    "@types/node": "^18.0.1",
+    "@types/node": "^18.0.3",
     "esm": "^3.2.25",
-    "nodemon": "^2.0.18",
+    "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
     "ts-node": "^10.8.2",
     "ts-node-dev": "^2.0.0",

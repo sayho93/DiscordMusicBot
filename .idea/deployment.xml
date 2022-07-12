@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="sayhoLightSail" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
+  <component name="PublishConfigData" serverName="lightSail" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
     <option name="confirmBeforeUploading" value="false" />
     <serverData>
-      <paths name="sayhoLightSail">
+      <paths name="lightSail">
         <serverdata>
           <mappings>
-            <mapping deploy="/discordMusicBot" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/discordMusicBot" local="$PROJECT_DIR$" web="" />
           </mappings>
         </serverdata>
       </paths>
