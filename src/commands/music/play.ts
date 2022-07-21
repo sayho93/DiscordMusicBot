@@ -1,5 +1,5 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
-import {MessageActionRow, MessageSelectMenu, VoiceChannel, StageChannel} from 'discord.js'
+import {ActionRowBuilder, SelectMenuBuilder, VoiceChannel, StageChannel} from 'discord.js'
 import {dispatchErrorLog, formatMessageEmbed, formatVideo} from '#utils/utils'
 import Config from '#configs/config'
 import {Log} from '#utils/logger'
@@ -7,6 +7,7 @@ import {Message} from 'discord.js'
 import {DiscordBotClient, MusicData, Song} from '#root/src'
 // @ts-ignore
 import Youtube from 'simple-youtube-api'
+import {PermissionFlagsBits} from 'discord-api-types/v10'
 
 const Play = () => {
     const data = new SlashCommandBuilder().setName('p').setDescription('Plays music with uri')
@@ -95,8 +96,9 @@ const Play = () => {
                 return [{label: title, description: title, value: url}]
             })
 
-            const component = new MessageSelectMenu().setCustomId('select').setPlaceholder('재생할 노래 선택').addOptions(list)
-            const row = new MessageActionRow().addComponents(component)
+            const component = new SelectMenuBuilder().setCustomId('select').setPlaceholder('재생할 노래 선택').addOptions(list)
+            const row = new ActionRowBuilder().addComponents(component)
+
             await message.reply({content: `'${searchTxt}' 검색 결과`, components: [row]})
         } catch (err) {
             await dispatchErrorLog(err)
@@ -120,7 +122,7 @@ const Play = () => {
 
         // @ts-ignore
         const permissions = voiceChannel.permissionsFor(message.client.user)
-        if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
+        if (!permissions.has(PermissionFlagsBits.Connect) || !permissions.has(PermissionFlagsBits.Speak)) {
             return message.channel.send('I need the permissions to join and speak in your voice channel')
         }
 

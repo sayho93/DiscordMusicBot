@@ -61,6 +61,7 @@ export default {
     name: 'interactionCreate',
     execute: async (interaction: Interaction, client: DiscordBotClient) => {
         if (interaction.isSelectMenu()) await selectMenuHandler(interaction, client)
-        else if (interaction.isCommand()) await commandHandler(interaction, client)
+        // else if (interaction.isCommand()) await commandHandler(interaction, client)
+        else if (interaction.isChatInputCommand()) await commandHandler(interaction, client)
     },
 }

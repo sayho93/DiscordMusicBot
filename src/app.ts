@@ -1,4 +1,4 @@
-import * as discord from 'discord.js'
+import {GatewayIntentBits} from 'discord.js'
 import Config from '#configs/config'
 import DiscordBotClient from '#src/loader/discordBotClient'
 import {Log} from '#utils/logger'
@@ -11,7 +11,13 @@ Log.info(JSON.stringify(process.versions))
 await getWebhookCredentials()
 
 const discordBotClient = DiscordBotClient({
-    intents: [discord.Intents.FLAGS.GUILDS, discord.Intents.FLAGS.GUILD_MEMBERS, discord.Intents.FLAGS.GUILD_MESSAGES, discord.Intents.FLAGS.GUILD_VOICE_STATES],
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.MessageContent,
+    ],
 })
 
 const startTime = new Date().getTime()
