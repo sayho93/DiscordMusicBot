@@ -99,6 +99,7 @@ const Play = () => {
             const component = new SelectMenuBuilder().setCustomId('select').setPlaceholder('재생할 노래 선택').addOptions(list)
             const row = new ActionRowBuilder().addComponents(component)
 
+            // @ts-ignore
             await message.reply({content: `'${searchTxt}' 검색 결과`, components: [row]})
         } catch (err) {
             await dispatchErrorLog(err)
