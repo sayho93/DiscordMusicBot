@@ -12,9 +12,7 @@ export default {
         const queue: Song[] = musicData.queue
         const embed: EmbedBuilder = new EmbedBuilder().setColor('#ffffff').setTitle('Queue').setThumbnail(queue[1].thumbnail)
 
-        queue.forEach((item, idx) => {
-            if (idx !== 0) embed.addFields([{name: `${idx}`, value: `${item.title}`}])
-        })
+        queue.forEach((item, idx) => idx !== 0 && embed.addFields([{name: `${idx}`, value: `${item.title}`}]))
         await message.reply({embeds: [embed]})
     },
 }

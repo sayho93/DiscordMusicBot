@@ -1,5 +1,5 @@
 import {SlashCommandBuilder} from '@discordjs/builders'
-import {ActionRowBuilder, SelectMenuBuilder, VoiceChannel, StageChannel} from 'discord.js'
+import {VoiceChannel, StageChannel} from 'discord.js'
 import {dispatchErrorLog, formatMessageEmbed, formatVideo} from '#utils/utils'
 import Config from '#configs/config'
 import {Log} from '#utils/logger'
@@ -96,11 +96,23 @@ const Play = () => {
                 return [{label: title, description: title, value: url}]
             })
 
-            const component = new SelectMenuBuilder().setCustomId('select').setPlaceholder('재생할 노래 선택').addOptions(list)
-            const row = new ActionRowBuilder().addComponents(component)
-
-            // @ts-ignore
-            await message.reply({content: `'${searchTxt}' 검색 결과`, components: [row]})
+            await message.reply({
+                content: `'${searchTxt}' 검색 결과`,
+                components: [
+                    {
+                        type: 1,
+                        components: [
+                            {
+                                type: 3,
+                                custom_id: 'select',
+                                options: list,
+                                placeholder: '재생할 노래 선택',
+                                max_values: 1,
+                            },
+                        ],
+                    },
+                ],
+            })
         } catch (err) {
             await dispatchErrorLog(err)
         }
