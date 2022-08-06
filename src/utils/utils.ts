@@ -1,4 +1,4 @@
-import {MessageEmbed, StageChannel, VoiceChannel, WebhookClient} from 'discord.js'
+import {EmbedBuilder, StageChannel, VoiceChannel, WebhookClient} from 'discord.js'
 import {Song} from '#root/src'
 import {HttpUtil} from '#utils/http'
 import Config from '#configs/config'
@@ -27,13 +27,15 @@ export const formatVideo = (video: any, voiceChannel: VoiceChannel | StageChanne
 }
 
 export const formatMessageEmbed = (url: string, queuedCount: number, queueLength: number, title: string, thumbnail: string) => {
-    return new MessageEmbed()
+    return new EmbedBuilder()
         .setColor('#ffffff')
         .setTitle('Queued')
         .setURL(url)
         .setDescription(`Queued ${queuedCount} track${queuedCount === 1 ? '' : 's'}`)
-        .addField(`Total Queue`, `${queueLength} tracks`)
-        .addField(`Track`, `:musical_note:  ${title} :musical_note: has been added to queue`)
+        .addFields([
+            {name: 'Total Queue', value: `${queueLength} tracks`},
+            {name: 'Track', value: `:musical_note:  ${title} :musical_note: has been added to queue`},
+        ])
         .setThumbnail(thumbnail)
 }
 
@@ -59,11 +61,11 @@ export const dispatchErrorLog = async (error: any, title?: string) => {
     if (!Config.webhookId || !Config.webhookToken) throw new Error('webhook credentials are missing')
 
     const webhookClient = new WebhookClient({id: Config.webhookId, token: Config.webhookToken})
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
         .setTitle(title ? title : 'Error Report')
-        .setColor('RED')
+        .setColor('#ff0000')
         .setDescription(<string>error.stack)
         // .addField('Stack', error.stack)
-        .addField('Message', error.message)
+        .addFields([{name: 'Message', value: error.message}])
     await webhookClient.send({embeds: [embed]})
 }

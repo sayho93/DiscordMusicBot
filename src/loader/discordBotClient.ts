@@ -1,4 +1,4 @@
-import {Client, ClientOptions, Collection, Message, MessageEmbed} from 'discord.js'
+import {Client, ClientOptions, Collection, Message, EmbedBuilder} from 'discord.js'
 import {
     AudioPlayer,
     AudioPlayerStatus,
@@ -34,7 +34,7 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClient => {
             .on(AudioPlayerStatus.Playing, () => {
                 const currentItem = musicData.queue[0]
                 if (currentItem !== undefined) {
-                    const embed: MessageEmbed = new MessageEmbed()
+                    const embed: EmbedBuilder = new EmbedBuilder()
                         .setColor('#0099ff')
                         .setTitle(`:: Currently playing :arrow_forward: ::`)
                         .setDescription(`${currentItem.title} (${currentItem.duration})`)

@@ -6,10 +6,10 @@
   "type": "module",
   "main": "src/app.ts",
   "scripts": {
-    "start": "npm i && NODE_NO_WARNINGS=1 node src/app.js",
+    "start": "yarn && NODE_NO_WARNINGS=1 node src/app.js",
     "build": "tsc -p . && cp .env ./dist/.env ",
-    "start:build": "tsc -p . && cp .env ./dist/./env && node dist/src/app.js",
-    "start:dev": "npm run build && cd ~/WebstormProjects/DiscordMusicBot && npm i && node src/app.js",
+    "start:build": "tsc -p . && cp .env ./dist/.env && node dist/src/app.js",
+    "start:dev": "yarn run build && cd ~/WebstormProjects/DiscordMusicBot && npm i && node src/app.js",
     "run:dev": "nodemon --watch 'src/**/*.ts' --exec node --loader ts-node/esm src/app.ts"
   },
   "imports": {
@@ -22,12 +22,11 @@
     "#utils/*": "./src/utils/*.js"
   },
   "dependencies": {
-    "@discordjs/builders": "^0.15.0",
-    "@discordjs/rest": "^0.5.0",
-    "@discordjs/voice": "^0.10.0",
+    "@discordjs/rest": "^1.0.1",
+    "@discordjs/voice": "^0.11.0",
     "axios": "^0.27.2",
-    "discord-api-types": "^0.36.1",
-    "discord.js": "^13.8.1",
+    "discord-api-types": "^0.37.0",
+    "discord.js": "^14.1.1",
     "dotenv": "^16.0.1",
     "ffmpeg-static": "^5.0.2",
     "https-proxy-agent": "^5.0.0",
@@ -36,15 +35,14 @@
     "simple-youtube-api": "^5.2.1",
     "winston": "^3.8.1",
     "winston-daily-rotate-file": "^4.7.1",
-    "youtube-dl-exec": "^2.1.0",
     "ytdl-core": "^4.11.0"
   },
   "devDependencies": {
-    "@types/node": "^18.0.3",
+    "@types/node": "^18.6.2",
     "esm": "^3.2.25",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
-    "ts-node": "^10.8.2",
+    "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "typescript": "^4.7.4"
   }

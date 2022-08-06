@@ -5,7 +5,7 @@ import {DiscordBotClient} from '#root/src'
 export default {
     name: 'voiceStateUpdate',
     execute: async (oldState: VoiceState, newState: VoiceState, client: DiscordBotClient) => {
-        if (oldState.channelId !== (oldState.guild.me?.voice.channelId || newState.channel)) return
+        if (oldState.channelId !== (oldState.guild.members.me?.voice.channelId || newState.channel)) return
 
         if (!((oldState.channel?.members.size ?? 1) - 1)) {
             Log.info('start')
