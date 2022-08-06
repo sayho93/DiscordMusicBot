@@ -6,10 +6,10 @@
   "type": "module",
   "main": "src/app.ts",
   "scripts": {
-    "start": "npm i && NODE_NO_WARNINGS=1 node src/app.js",
+    "start": "yarn && NODE_NO_WARNINGS=1 node src/app.js",
     "build": "tsc -p . && cp .env ./dist/.env ",
-    "start:build": "tsc -p . && cp .env ./dist/./env && node dist/src/app.js",
-    "start:dev": "npm run build && cd ~/WebstormProjects/DiscordMusicBot && npm i && node src/app.js",
+    "start:build": "tsc -p . && cp .env ./dist/.env && node dist/src/app.js",
+    "start:dev": "yarn run build && cd ~/WebstormProjects/DiscordMusicBot && npm i && node src/app.js",
     "run:dev": "nodemon --watch 'src/**/*.ts' --exec node --loader ts-node/esm src/app.ts"
   },
   "imports": {
