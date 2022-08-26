@@ -108,7 +108,7 @@ const DiscordBotClient = (props: ClientOptions): DiscordBotClient => {
             highWaterMark: 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024,
             liveBuffer: 4000,
         }).on('error', (error: any) => {
-            message.reply(error)
+            // message.reply(error)
             Log.error(error)
         })
 
